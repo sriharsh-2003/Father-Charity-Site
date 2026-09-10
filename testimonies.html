@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__bar">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ﻭ</span>
+      <span class="i18n-ar">وقف [اسم الوالد]</span>
+      <span class="i18n-en">[Father's Name] Endowment</span>
+    </a>
+    <nav class="main-nav" data-main-nav>
+      <ul>
+        <li><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></li>
+        <li><a href="grave-locator.html"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></a></li>
+        <li><a href="testimonies.html" aria-current="page"><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></a></li>
+        <li><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></li>
+        <li><a href="donate.html"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-toggle" data-lang-toggle type="button">English</button>
+      <button class="nav-toggle" data-nav-toggle type="button" aria-expanded="false" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="section--tight" style="padding-top: var(--space-6);">
+  <div class="container prose">
+    <p class="eyebrow"><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></p>
+    <h1><span class="i18n-ar">ادعُ له، واترك كلمة إن أحببت</span><span class="i18n-en">Pray for him, and leave a word if you'd like</span></h1>
+    <p class="text-muted">
+      <span class="i18n-ar">هذه الصفحة عامة، أي زائر يمكنه ترك كلمة قصيرة. يُرجى إبقاء الرسائل ملائمة للمقام. الاسم اختياري.</span>
+      <span class="i18n-en">This page is public, any visitor can leave a short note. Please keep messages fitting for the occasion. Name is optional.</span>
+    </p>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container prose">
+    <form class="search-bar" id="testimony-form" style="flex-direction:column; align-items:stretch;">
+      <div class="field">
+        <label for="testimony-name">
+          <span class="i18n-ar">الاسم (اختياري)</span><span class="i18n-en">Name (optional)</span>
+        </label>
+        <input type="text" id="testimony-name" maxlength="80">
+      </div>
+      <div class="field">
+        <label for="testimony-message">
+          <span class="i18n-ar">رسالتك</span><span class="i18n-en">Your message</span>
+        </label>
+        <textarea id="testimony-message" maxlength="500" rows="4" required
+          style="border:1px solid var(--color-border); border-radius:var(--radius-s); padding:var(--space-3); font:inherit;"></textarea>
+      </div>
+      <div>
+        <button class="btn btn--primary" type="submit" id="testimony-submit">
+          <span class="i18n-ar">إرسال</span><span class="i18n-en">Submit</span>
+        </button>
+      </div>
+      <p class="text-muted" id="testimony-form-status" role="status" aria-live="polite" style="margin:0;"></p>
+    </form>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container">
+    <p class="text-muted" id="testimonies-count"></p>
+    <div id="testimonies-list" class="stack"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">وقف [اسم الوالد]</span><span class="i18n-en">[Father's Name] Endowment</span></strong>
+      </div>
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">روابط</span><span class="i18n-en">Links</span></strong>
+        <p><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></p>
+        <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span><span class="i18n-ar">جميع الحقوق محفوظة © [السنة]</span><span class="i18n-en">All rights reserved © [year]</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/testimonies.js"></script>
+</body>
+</html>

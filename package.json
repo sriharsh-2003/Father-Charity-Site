@@ -1,0 +1,7 @@
+{
+  "name": "father-charity-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Static memorial/charity site with one serverless endpoint (/api/testimonies) for the prayer testimonies feature. No build step for the site itself."
+}

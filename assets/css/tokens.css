@@ -1,0 +1,82 @@
+/*
+  DESIGN TOKENS: PLACEHOLDER SET
+  ---------------------------------------------------------------------------
+  These are NOT the official DGA Platforms Code tokens. Nobody outside DGA's
+  Figma library has those. This file exists so the whole site is built on
+  variables, not hardcoded values, so that when you get Figma access (or the
+  client sends screenshots), we swap the values in this one file and the
+  entire site updates instead of hunting through every page.
+
+  Naming mirrors what the DGA checklist calls things (Color Design Tokens,
+  Global Spacing Design Tokens, Typography Design Tokens) so it is easy to
+  map "their token name" -> "our variable" later.
+  ---------------------------------------------------------------------------
+*/
+
+:root {
+  /* ---- Color tokens (placeholder, swap with DGA Color Design Tokens) ---- */
+  --color-primary-900: #0d3b2e;   /* deep majlis green: headers, nav, stamp */
+  --color-primary-700: #14523f;
+  --color-primary-500: #1c6b52;   /* primary buttons/links */
+  --color-primary-100: #e4ede9;   /* tinted backgrounds */
+
+  --color-accent-600: #a17a34;    /* muted date-palm gold, used sparingly */
+  --color-accent-100: #f3ead4;
+
+  --color-ink-900: #1c211d;       /* body text */
+  --color-ink-600: #4b544d;       /* secondary text */
+  --color-ink-300: #8b948d;       /* placeholder / disabled text */
+
+  --color-surface: #faf8f3;       /* page background, warm parchment, not stark white */
+  --color-surface-raised: #ffffff;
+  --color-border: #dcd6c8;
+
+  /* Status colors, reserved ONLY for status use per checklist item 6 */
+  --color-status-success: #1e7d4b;
+  --color-status-error: #b3261e;
+  --color-status-warning: #a15c00;
+  --color-status-info: #21618c;
+
+  /* ---- Typography tokens ---- */
+  --font-family-base: "IBM Plex Sans Arabic", "IBM Plex Sans", system-ui, sans-serif;
+
+  --font-size-display-l: 2.75rem;
+  --font-size-display-m: 2.125rem;
+  --font-size-heading-l: 1.625rem;
+  --font-size-heading-m: 1.25rem;
+  --font-size-body-l: 1.0625rem;
+  --font-size-body-m: 1rem;
+  --font-size-body-s: 0.875rem;
+  --font-size-caption: 0.75rem;
+
+  --line-height-display: 1.2;
+  --line-height-body: 1.7;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* ---- Spacing tokens, 4px base grid, per checklist item 4 ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* ---- Radius / elevation ---- */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-full: 999px;
+  --shadow-card: 0 1px 2px rgba(20, 30, 25, 0.06), 0 4px 16px rgba(20, 30, 25, 0.06);
+
+  /* ---- Layout ---- */
+  --content-max-width: 1180px;
+  --content-measure: 68ch; /* comfortable reading line length */
+
+  --motion-fast: 120ms ease;
+  --motion-base: 220ms ease;
+}

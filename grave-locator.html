@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__bar">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ﻭ</span>
+      <span class="i18n-ar">وقف [اسم الوالد]</span>
+      <span class="i18n-en">[Father's Name] Endowment</span>
+    </a>
+    <nav class="main-nav" data-main-nav>
+      <ul>
+        <li><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></li>
+        <li><a href="grave-locator.html" aria-current="page"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></a></li>
+        <li><a href="testimonies.html"><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></a></li>
+        <li><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></li>
+        <li><a href="donate.html"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-toggle" data-lang-toggle type="button">English</button>
+      <button class="nav-toggle" data-nav-toggle type="button" aria-expanded="false" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="section--tight" style="padding-top: var(--space-6);">
+  <div class="container">
+    <p class="eyebrow"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></p>
+    <h1><span class="i18n-ar">موضع دفنه</span><span class="i18n-en">His resting place</span></h1>
+    <p class="text-muted prose">
+      <span class="i18n-ar">تفاصيل موضع دفن [اسم الوالد]، مع رقم القبر وموقعه على الخريطة لمن أراد الزيارة. يمكن لاحقًا إضافة أفراد آخرين من العائلة أو الوقف بنفس الطريقة، ولذلك بقي البحث بالاسم والتاريخ متاحًا.</span>
+      <span class="i18n-en">Details of where [Father's Name] is laid to rest, with the grave number and its location on the map for anyone who wants to visit. Other family or endowment members can be added the same way later, which is why search by name and date stays available.</span>
+    </p>
+
+    <form class="search-bar" id="search-form">
+      <div class="field">
+        <label for="search-name"><span class="i18n-ar">الاسم</span><span class="i18n-en">Name</span></label>
+        <input type="search" id="search-name" placeholder="...">
+      </div>
+      <div class="field">
+        <label for="search-date"><span class="i18n-ar">التاريخ</span><span class="i18n-en">Date</span></label>
+        <input type="date" id="search-date">
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container">
+    <p class="text-muted" id="results-count" style="margin-bottom: var(--space-4);"></p>
+    <div class="results-layout">
+      <div>
+        <div class="results-list" id="results-list"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+      <div id="map" role="application" aria-label="Grave locations map"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container">
+    <div class="notice notice--info prose">
+      <span class="i18n-ar">هذه الصفحة مُعدّة يدويًا حاليًا لتوضيح موضع دفن [اسم الوالد]. إن رغبت العائلة بإضافة أفراد آخرين لاحقًا، تُضاف بياناتهم بنفس الطريقة في ملف السجلات.</span>
+      <span class="i18n-en">This page is currently prepared by hand to show where [Father's Name] is laid to rest. If the family wants to add other family members later, their records can be added the same way in the records file.</span>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">وقف [اسم الوالد]</span><span class="i18n-en">[Father's Name] Endowment</span></strong>
+      </div>
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">روابط</span><span class="i18n-en">Links</span></strong>
+        <p><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></p>
+        <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span><span class="i18n-ar">جميع الحقوق محفوظة © [السنة]</span><span class="i18n-en">All rights reserved © [year]</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/vendor/papaparse/papaparse.min.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/share.js"></script>
+<script src="assets/js/pray.js"></script>
+<script src="assets/js/grave-locator.js"></script>
+</body>
+</html>

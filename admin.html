@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Testimonies admin</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<!--
+  Not linked from anywhere in the site's navigation on purpose. This page is
+  a moderation tool, not a public page. Its only protection is the admin
+  token, and "not linked" is not security, so treat the ADMIN_TOKEN
+  environment variable as a real secret: long, random, and known only to
+  whoever moderates the testimonies. See README-handoff.md for setup.
+-->
+
+<div class="container" style="padding-block: var(--space-6);">
+  <h1>Testimonies admin</h1>
+  <p class="text-muted">Paste the admin token to load and moderate submissions. The token is kept only in this browser tab's memory, it is never saved anywhere.</p>
+
+  <div class="field" style="max-width: 420px;">
+    <label for="admin-token">Admin token</label>
+    <input type="password" id="admin-token" autocomplete="off">
+  </div>
+  <button class="btn btn--primary" id="admin-load">Load testimonies</button>
+  <p id="admin-status" class="text-muted" style="margin-top: var(--space-3);"></p>
+
+  <div id="admin-list" class="stack" style="margin-top: var(--space-6);"></div>
+</div>
+
+<script src="assets/js/common.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
