@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><span class="i18n-ar">الرئيسية | وقف [اسم الوالد]</span><span class="i18n-en">Home | [Father's Name] Endowment</span></title>
+<title><span class="i18n-ar">الرئيسية | وقف عبدالله العجلان</span><span class="i18n-en">Home | Abdullah Alajlan Endowment</span></title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -39,6 +39,16 @@
   --color-surface: #faf8f3;       /* page background, warm parchment, not stark white */
   --color-surface-raised: #ffffff;
   --color-border: #dcd6c8;
+
+  /* Aura / glass tokens: soft warm gradient wash + translucent panels */
+  --color-aura-blush: #f3ddd0;
+  --color-aura-peach: #ecc9b3;
+  --color-aura-sage: #d9e3da;
+  --color-aura-gradient: linear-gradient(135deg, var(--color-aura-blush) 0%, var(--color-aura-peach) 45%, var(--color-aura-sage) 100%);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 16px;
 
   /* Status colors, reserved ONLY for status use per checklist item 6 */
   --color-status-success: #1e7d4b;
@@ -146,7 +156,7 @@ html[lang="en"] { direction: ltr; }
 .stack > * + * { margin-block-start: var(--space-5); }
 .section { padding-block: var(--space-8); }
 .section--tight { padding-block: var(--space-6); }
-.section--tinted { background: var(--color-primary-100); }
+.section--tinted { background: var(--color-aura-gradient); }
 
 /* =========================================================================
    TYPOGRAPHY
@@ -284,14 +294,41 @@ p { margin: 0 0 var(--space-4); }
    HERO
    ========================================================================= */
 .hero {
-  background: linear-gradient(180deg, var(--color-primary-900), var(--color-primary-700));
-  color: var(--color-surface);
+  position: relative;
+  background: var(--color-aura-gradient);
+  color: var(--color-ink-900);
   padding-block: var(--space-9);
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgOTAwIDUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1heCBzbGljZSI+CiAgPGcgZmlsbD0iIzBkM2IyZSI+CiAgICA8cmVjdCB4PSIwIiB5PSIzMDAiIHdpZHRoPSI5MDAiIGhlaWdodD0iMjAwIi8+CiAgICA8cmVjdCB4PSI0MCIgeT0iMjIwIiB3aWR0aD0iNzAiIGhlaWdodD0iMTgwIi8+CiAgICA8cmVjdCB4PSIxMjAiIHk9IjE4MCIgd2lkdGg9IjUwIiBoZWlnaHQ9IjIyMCIvPgogICAgPGNpcmNsZSBjeD0iMTQ1IiBjeT0iMTY1IiByPSIxOCIvPgogICAgPHBhdGggZD0iTSAyMDAgMzAwIEwgMjAwIDIzMCBRIDI2MCAxNzAgMzIwIDIzMCBMIDMyMCAzMDAgWiIvPgogICAgPGNpcmNsZSBjeD0iMjYwIiBjeT0iMTUwIiByPSIzNCIvPgogICAgPHJlY3QgeD0iMjQ4IiB5PSI5NSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjYwIi8+CiAgICA8Y2lyY2xlIGN4PSIyNjAiIGN5PSI5MCIgcj0iOSIvPgogICAgPHJlY3QgeD0iMzYwIiB5PSIyNTAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIxNTAiLz4KICAgIDxyZWN0IHg9IjQ0MCIgeT0iMjAwIiB3aWR0aD0iODAiIGhlaWdodD0iMjAwIi8+CiAgICA8cGF0aCBkPSJNIDQ0MCAyMDAgUSA0ODAgMTUwIDUyMCAyMDAgWiIvPgogICAgPHJlY3QgeD0iNTQwIiB5PSIyNDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIxNjAiLz4KICAgIDxjaXJjbGUgY3g9IjU2MCIgY3k9IjIyMCIgcj0iMTQiLz4KICAgIDxwYXRoIGQ9Ik0gNjIwIDMwMCBMIDYyMCAyMzUgUSA2ODAgMTc1IDc0MCAyMzUgTCA3NDAgMzAwIFoiLz4KICAgIDxjaXJjbGUgY3g9IjY4MCIgY3k9IjE1NSIgcj0iMzYiLz4KICAgIDxyZWN0IHg9IjY2OCIgeT0iOTgiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2MCIvPgogICAgPGNpcmNsZSBjeD0iNjgwIiBjeT0iOTMiIHI9IjkiLz4KICAgIDxyZWN0IHg9Ijc4MCIgeT0iMjYwIiB3aWR0aD0iNTUiIGhlaWdodD0iMTQwIi8+CiAgICA8cmVjdCB4PSI4NDAiIHk9IjIyMCIgd2lkdGg9IjQ1IiBoZWlnaHQ9IjE4MCIvPgogIDwvZz4KPC9zdmc+Cg==");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 900px 500px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  inset-inline-start: -10%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
 }
 .hero__layout {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-7);
+  z-index: 1;
 }
 .hero__portrait { flex: 0 0 auto; }
 .hero__portrait img {
@@ -299,6 +336,8 @@ p { margin: 0 0 var(--space-4); }
   height: 200px;
   border-radius: 50%;
   display: block;
+  border: 6px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
 }
 .hero__text { flex: 1 1 auto; min-width: 0; }
 @media (max-width: 760px) {
@@ -306,8 +345,22 @@ p { margin: 0 0 var(--space-4); }
   .hero__portrait img { width: 150px; height: 150px; }
   .hero__actions { justify-content: center; }
 }
-.hero h1 { color: #fff; }
-.hero .text-muted { color: rgba(250, 248, 243, 0.78); }
+.hero h1 { color: var(--color-primary-900); }
+
+/* =========================================================================
+   GLASSMORPHISM UTILITY
+   Applied to cards sitting on top of a gradient/tinted background: verse
+   picker note, prayer feed cards, the directions box, notices. Not used on
+   plain white backgrounds, translucency needs something showing through it.
+   ========================================================================= */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+}
+.hero .text-muted { color: var(--color-ink-600); }
 .hero__actions { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
 
 /* =========================================================================
@@ -558,6 +611,14 @@ p { margin: 0 0 var(--space-4); }
   flex-direction: column;
   gap: var(--space-2);
 }
+/* Used where the feed sits on the aura gradient (home page), so the cards
+   read as glass panels rather than plain white cards. */
+.prayers-feed--glass .prayer-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+}
 .prayer-card__verse { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); font-size: var(--font-size-body-s); margin: 0; }
 .prayer-card__message { margin: 0; font-size: var(--font-size-body-s); }
 .prayer-card__name { margin: 0; color: var(--color-ink-600); font-size: var(--font-size-caption); }
@@ -575,13 +636,17 @@ p { margin: 0 0 var(--space-4); }
    DIRECTIONS MODULE
    ========================================================================= */
 .directions-box {
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
+  background: var(--color-aura-gradient);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-m);
   padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+.directions-box .field input,
+.directions-box select {
+  background: var(--glass-bg-strong);
 }
 .directions-box__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
@@ -603,8 +668,8 @@ p { margin: 0 0 var(--space-4); }
   <div class="container site-header__bar">
     <a class="brand" href="index.html">
       <span class="brand__mark" aria-hidden="true">ﻭ</span>
-      <span class="i18n-ar">وقف [اسم الوالد]</span>
-      <span class="i18n-en">[Father's Name] Endowment</span>
+      <span class="i18n-ar">وقف عبدالله العجلان</span>
+      <span class="i18n-en">Abdullah Alajlan Endowment</span>
     </a>
     <nav class="main-nav" data-main-nav>
       <ul>
@@ -632,8 +697,8 @@ p { margin: 0 0 var(--space-4); }
         <span class="i18n-ar">في ذكرى</span><span class="i18n-en">In loving memory</span>
       </p>
       <h1 class="prose">
-        <span class="i18n-ar">[اسم الوالد رحمه الله]: صدقة جارية وأثر باقٍ</span>
-        <span class="i18n-en">[Father's Name]: an ongoing charity, a lasting legacy</span>
+        <span class="i18n-ar">عبدالله العجلان رحمه الله: صدقة جارية وأثر باقٍ</span>
+        <span class="i18n-en">Abdullah Alajlan: an ongoing charity, a lasting legacy</span>
       </h1>
       <p class="prose text-muted">
         <span class="i18n-ar">هذه المنصة تحفظ ذكراه، وتيسّر الدعاء له وزيارة موضع دفنه، وتقدّم محتوى يخدم من أراد الاستفادة والأجر المتصل.</span>
@@ -643,12 +708,12 @@ p { margin: 0 0 var(--space-4); }
         <a class="btn btn--primary" href="pray.html">
           <span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span>
         </a>
-        <a class="btn btn--secondary" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.5);" href="grave-locator.html">
+        <a class="btn btn--secondary glass" style="color:var(--color-primary-900);" href="grave-locator.html">
           <span class="i18n-ar">زيارة موضع دفنه</span><span class="i18n-en">Visit his resting place</span>
         </a>
       </div>
-      <div class="share-widget" data-share data-name-ar="[اسم الوالد]" data-name-en="[Father's Name]" data-url="" style="margin-top: var(--space-4);">
-        <button class="btn btn--ghost btn--sm" style="color:#fff; border-color:rgba(255,255,255,0.4);" data-share-trigger></button>
+      <div class="share-widget" data-share data-name-ar="عبدالله العجلان" data-name-en="Abdullah Alajlan" data-url="" style="margin-top: var(--space-4);">
+        <button class="btn btn--ghost btn--sm glass" style="color:var(--color-primary-900);" data-share-trigger></button>
         <div class="share-menu" data-share-menu></div>
       </div>
     </div>
@@ -673,8 +738,8 @@ p { margin: 0 0 var(--space-4); }
       <span class="i18n-ar">قصة موجزة</span><span class="i18n-en">A brief story</span>
     </h2>
     <p class="prose">
-      <span class="i18n-ar">[نص قابل للتعديل] وُلد [اسم الوالد] عام [xxxx]، وأمضى حياته في خدمة أسرته ومجتمعه. بعد وفاته، أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
-      <span class="i18n-en">[Editable text] [Father's Name] was born in [year], and spent his life in service to his family and community. After his passing, this platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
+      <span class="i18n-ar">[نص قابل للتعديل] وُلد عبدالله العجلان عام [xxxx]، وتوفي في ١٧ صفر ١٤٤٨هـ الموافق ١٠ سبتمبر ٢٠٢٦م، بعد أن أمضى حياته في خدمة أسرته ومجتمعه. أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
+      <span class="i18n-en">[Editable text] Abdullah Alajlan was born in [year], and passed away on 10 September 2026 (17 Safar 1448H), after a life spent in service to his family and community. This platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
     </p>
   </div>
 </section>
@@ -684,7 +749,7 @@ p { margin: 0 0 var(--space-4); }
     <p class="eyebrow"><span class="i18n-ar">من دعا له</span><span class="i18n-en">Who has prayed for him</span></p>
     <h2><span class="i18n-ar">دعوات من زوار هذه الصفحة</span><span class="i18n-en">Prayers from visitors to this page</span></h2>
     <p class="text-muted" id="prayers-feed-count"></p>
-    <div id="prayers-feed" data-prayers-feed class="prayers-feed"></div>
+    <div id="prayers-feed" data-prayers-feed class="prayers-feed prayers-feed--glass"></div>
     <a class="btn btn--secondary" href="pray.html" style="margin-top: var(--space-4);">
       <span class="i18n-ar">ادعُ له أنت أيضًا</span><span class="i18n-en">Pray for him too</span>
     </a>
@@ -695,7 +760,7 @@ p { margin: 0 0 var(--space-4); }
   <div class="container">
     <div class="footer-grid">
       <div>
-        <strong style="color:#fff;"><span class="i18n-ar">وقف [اسم الوالد]</span><span class="i18n-en">[Father's Name] Endowment</span></strong>
+        <strong style="color:#fff;"><span class="i18n-ar">وقف عبدالله العجلان</span><span class="i18n-en">Abdullah Alajlan Endowment</span></strong>
         <p style="margin-top:var(--space-3);"><span class="i18n-ar">[العنوان (قابل للتعديل)]</span><span class="i18n-en">[Address (editable)]</span></p>
       </div>
       <div>
@@ -1038,7 +1103,7 @@ document.addEventListener("DOMContentLoaded", initShareWidgets);
 document.addEventListener("langchange", initShareWidgets);
 
 </script>
-<!-- pray.js skipped: this preview has no /api/prayers backend to call, the feed will show a loading state -->
+<!-- pray.js skipped: no /api/prayers backend in this standalone preview -->
 <!-- visitation dates CSV fetch skipped in this standalone preview -->
 </body>
 </html>

@@ -306,3 +306,47 @@ Modified: `index.html`, `grave-locator.html`, `assets/js/grave-locator.js`,
 `admin.html`, `assets/css/main.css`, and the nav link plus footer year on
 `knowledge-hub.html`, `article-dua.html`, `article-visiting.html`,
 `donate.html`, `privacy.html`.
+
+## Round 4: real data, visual redesign
+
+**Real content is in now.** Name: عبدالله محمد العجلان / Abdullah Mohammed
+Alajlan (full form, used on the grave record). Site-wide references use the
+shorter عبدالله العجلان / Abdullah Alajlan. Death date: 10 September 2026
+(17 Safar 1448H), confirmed from the stone-plaque proof image. Grave
+location: Column 20, Row 58.
+
+**Still needed from you: the actual coordinates.** The Google Maps short
+link (`maps.app.goo.gl/...`) can't be resolved from here, Google blocks
+automated access to it, and it's not indexed anywhere I can search. The map
+and the "Get Directions" buttons on the grave locator page won't work until
+real numbers replace the `REPLACE_LAT` / `REPLACE_LNG` placeholders in
+`assets/data/graves.csv`. Easiest way to get them: open that link on a
+computer, right-click the pin on the map, choose "What's here?", and Google
+shows the exact latitude/longitude, or check the URL bar after it loads,
+it usually contains `@24.xxxx,46.xxxx` somewhere in it.
+
+**Visual redesign: aura/glassmorphism.** The hero moved from a solid dark
+green background to a soft warm gradient (blush/peach/sage), with a faded
+abstract architectural silhouette behind it, echoing the reference image
+you shared. That silhouette is a generic illustrated shape, not a real
+building or a stock photo, same reasoning as the portrait: I can't verify
+licensing on an image pulled from a search, and it's trivial to swap for a
+real photo you own the rights to later, just replace
+`assets/img/arch-silhouette.svg`. A `.glass` utility class (translucent
+background plus backdrop blur) is now used on the hero buttons, the
+prayers feed cards on the home page, and the directions box on the grave
+locator page. `--color-aura-*` and `--glass-*` tokens are in `tokens.css`
+if you want to adjust the palette.
+
+**On stock photos of religious places**: same answer as the portrait, I
+won't embed a photo from a search result as a permanent site asset without
+being able to verify its license, that's a real legal exposure for a
+client site, not just a style preference. If you or the family have your
+own photos (or a stock subscription you've paid for), those drop in
+cleanly, happy to wire them in.
+
+**QR code**: noted that you're adding one to the physical stone, pointing
+to the website. I didn't generate it yet since encoding the wrong URL onto
+carved stone is expensive to fix, tell me exactly which page it should
+point to (the grave locator page is the natural fit) and your final live
+domain, and I'll generate it.
