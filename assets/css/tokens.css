@@ -31,6 +31,16 @@
   --color-surface-raised: #ffffff;
   --color-border: #dcd6c8;
 
+  /* Aura / glass tokens: soft warm gradient wash + translucent panels */
+  --color-aura-blush: #f3ddd0;
+  --color-aura-peach: #ecc9b3;
+  --color-aura-sage: #d9e3da;
+  --color-aura-gradient: linear-gradient(135deg, var(--color-aura-blush) 0%, var(--color-aura-peach) 45%, var(--color-aura-sage) 100%);
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: 16px;
+
   /* Status colors, reserved ONLY for status use per checklist item 6 */
   --color-status-success: #1e7d4b;
   --color-status-error: #b3261e;

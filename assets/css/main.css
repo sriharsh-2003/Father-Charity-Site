@@ -54,7 +54,7 @@ html[lang="en"] { direction: ltr; }
 .stack > * + * { margin-block-start: var(--space-5); }
 .section { padding-block: var(--space-8); }
 .section--tight { padding-block: var(--space-6); }
-.section--tinted { background: var(--color-primary-100); }
+.section--tinted { background: var(--color-aura-gradient); }
 
 /* =========================================================================
    TYPOGRAPHY
@@ -192,14 +192,41 @@ p { margin: 0 0 var(--space-4); }
    HERO
    ========================================================================= */
 .hero {
-  background: linear-gradient(180deg, var(--color-primary-900), var(--color-primary-700));
-  color: var(--color-surface);
+  position: relative;
+  background: var(--color-aura-gradient);
+  color: var(--color-ink-900);
   padding-block: var(--space-9);
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/img/arch-silhouette.svg");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 900px 500px;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  inset-inline-start: -10%;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
 }
 .hero__layout {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-7);
+  z-index: 1;
 }
 .hero__portrait { flex: 0 0 auto; }
 .hero__portrait img {
@@ -207,6 +234,8 @@ p { margin: 0 0 var(--space-4); }
   height: 200px;
   border-radius: 50%;
   display: block;
+  border: 6px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
 }
 .hero__text { flex: 1 1 auto; min-width: 0; }
 @media (max-width: 760px) {
@@ -214,8 +243,22 @@ p { margin: 0 0 var(--space-4); }
   .hero__portrait img { width: 150px; height: 150px; }
   .hero__actions { justify-content: center; }
 }
-.hero h1 { color: #fff; }
-.hero .text-muted { color: rgba(250, 248, 243, 0.78); }
+.hero h1 { color: var(--color-primary-900); }
+
+/* =========================================================================
+   GLASSMORPHISM UTILITY
+   Applied to cards sitting on top of a gradient/tinted background: verse
+   picker note, prayer feed cards, the directions box, notices. Not used on
+   plain white backgrounds, translucency needs something showing through it.
+   ========================================================================= */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+}
+.hero .text-muted { color: var(--color-ink-600); }
 .hero__actions { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
 
 /* =========================================================================
@@ -466,6 +509,14 @@ p { margin: 0 0 var(--space-4); }
   flex-direction: column;
   gap: var(--space-2);
 }
+/* Used where the feed sits on the aura gradient (home page), so the cards
+   read as glass panels rather than plain white cards. */
+.prayers-feed--glass .prayer-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-color: var(--glass-border);
+}
 .prayer-card__verse { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); font-size: var(--font-size-body-s); margin: 0; }
 .prayer-card__message { margin: 0; font-size: var(--font-size-body-s); }
 .prayer-card__name { margin: 0; color: var(--color-ink-600); font-size: var(--font-size-caption); }
@@ -483,13 +534,17 @@ p { margin: 0 0 var(--space-4); }
    DIRECTIONS MODULE
    ========================================================================= */
 .directions-box {
-  background: var(--color-surface-raised);
-  border: 1px solid var(--color-border);
+  background: var(--color-aura-gradient);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-m);
   padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+.directions-box .field input,
+.directions-box select {
+  background: var(--glass-bg-strong);
 }
 .directions-box__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
