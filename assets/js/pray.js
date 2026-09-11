@@ -1,70 +1,160 @@
 /*
-  Pray button.
+  Drives two things:
+  1. The full "pray for him" flow on pray.html: pick a verse (or random),
+     optionally add a name and a message, submit to /api/prayers.
+  2. The scrolling prayers feed, rendered from /api/prayers, shared between
+     pray.html and the home page (index.html only calls renderPrayersFeed,
+     it doesn't need the picker/form).
 
-  IMPORTANT LIMITATION (flagged here on purpose, and in the handoff notes):
-  This is per-device only, stored in localStorage. It is NOT a real IP-based
-  or account-based tracker, and it cannot show a shared "1,204 people have
-  prayed for him" count across all visitors. That would need a server and a
-  database, which the brief explicitly ruled out for the MVP. What it CAN do,
-  with zero data collection: remember on this browser/device whether this
-  person prayed for a given grave, so the button does not reset every visit.
-
-  Markup contract:
-  <button class="pray-btn" data-pray data-pray-id="grave-0007">
-    <span data-pray-label></span>
-  </button>
-  <span class="text-muted" data-pray-count-label></span>  (optional, sitewide total)
+  Requires assets/data/verses.js (CURATED_VERSES) to be loaded first.
 */
 
-function prayedIds() {
-  try {
-    return JSON.parse(localStorage.getItem("prayed_ids") || "[]");
-  } catch (e) {
-    return [];
-  }
+let SELECTED_VERSE = null; // { key, label } or { key: "random", label }
+
+function pickRandomVerse() {
+  const v = CURATED_VERSES[Math.floor(Math.random() * CURATED_VERSES.length)];
+  return v;
 }
 
-function markPrayed(id) {
-  const ids = prayedIds();
-  if (!ids.includes(id)) {
-    ids.push(id);
-    localStorage.setItem("prayed_ids", JSON.stringify(ids));
-  }
-  return ids.length;
+function verseLabel(verse) {
+  const lang = currentLang();
+  return lang === "ar" ? verse.label_ar : verse.label_en;
 }
 
-function renderPrayButton(btn) {
-  const id = btn.dataset.prayId;
-  const label = btn.querySelector("[data-pray-label]") || btn;
-  const already = prayedIds().includes(id);
-  btn.setAttribute("aria-pressed", String(already));
-  btn.disabled = already;
-  label.textContent = already ? t().prayDone : t().prayDefault;
-}
+function initVersePicker() {
+  const container = document.getElementById("verse-picker");
+  if (!container) return;
 
-function renderPrayCounters() {
-  const total = prayedIds().length;
-  document.querySelectorAll("[data-pray-count-label]").forEach((el) => {
-    el.textContent = t().prayCount(total);
-  });
-}
+  const lang = currentLang();
+  const buttons = CURATED_VERSES.map(
+    (v) => `<button type="button" class="btn btn--secondary btn--sm" data-verse-key="${v.key}">${verseLabel(v)}</button>`
+  );
+  buttons.push(
+    `<button type="button" class="btn btn--secondary btn--sm" data-verse-key="random">${lang === "ar" ? "اختيار عشوائي" : "Random"}</button>`
+  );
+  container.innerHTML = buttons.join("");
 
-function initPrayButtons() {
-  document.querySelectorAll("[data-pray]").forEach((btn) => {
-    renderPrayButton(btn);
-    if (btn.dataset.prayBound) return;
-    btn.dataset.prayBound = "1";
+  container.querySelectorAll("[data-verse-key]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const id = btn.dataset.prayId;
-      if (!id) return;
-      markPrayed(id);
-      renderPrayButton(btn);
-      renderPrayCounters();
-      showToast(t().prayDone, "success");
+      container.querySelectorAll("[data-verse-key]").forEach((b) => b.classList.remove("btn--primary"));
+      container.querySelectorAll("[data-verse-key]").forEach((b) => b.classList.add("btn--secondary"));
+      btn.classList.remove("btn--secondary");
+      btn.classList.add("btn--primary");
+
+      const key = btn.dataset.verseKey;
+      if (key === "random") {
+        const random = pickRandomVerse();
+        SELECTED_VERSE = { key: "random", label: verseLabel(random), url: random.url };
+      } else {
+        const match = CURATED_VERSES.find((v) => v.key === key);
+        SELECTED_VERSE = { key, label: verseLabel(match), url: match.url };
+      }
+
+      const linkEl = document.getElementById("verse-open-link");
+      if (linkEl) {
+        linkEl.href = SELECTED_VERSE.url;
+        linkEl.hidden = false;
+      }
+      const formSection = document.getElementById("prayer-form-section");
+      if (formSection) formSection.hidden = false;
     });
   });
-  renderPrayCounters();
 }
 
-document.addEventListener("DOMContentLoaded", initPrayButtons);
-document.addEventListener("langchange", initPrayButtons);
+async function submitPrayer(e) {
+  e.preventDefault();
+  const statusEl = document.getElementById("prayer-form-status");
+  const submitBtn = document.getElementById("prayer-submit");
+
+  if (!SELECTED_VERSE) return;
+
+  const name = document.getElementById("prayer-name").value;
+  const message = document.getElementById("prayer-message").value;
+
+  submitBtn.disabled = true;
+  statusEl.textContent = t().testimonySubmitting;
+
+  try {
+    const res = await fetch("/api/prayers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, message, verse: SELECTED_VERSE.key }),
+    });
+
+    if (res.status === 429) {
+      statusEl.textContent = t().testimonyRateLimited;
+    } else if (res.status === 409) {
+      statusEl.textContent = t().testimonyDuplicate;
+    } else if (!res.ok) {
+      statusEl.textContent = t().testimonyError;
+    } else {
+      statusEl.textContent = t().testimonySuccess;
+      document.getElementById("prayer-form").reset();
+      loadPrayersFeed("prayers-feed");
+    }
+  } catch (err) {
+    statusEl.textContent = t().testimonyError;
+  } finally {
+    submitBtn.disabled = false;
+  }
+}
+
+function renderPrayersFeed(containerId, prayers) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const countEl = document.getElementById(containerId + "-count");
+  const lang = currentLang();
+
+  if (countEl) countEl.textContent = t().testimonyCount(prayers.length);
+
+  if (prayers.length === 0) {
+    container.innerHTML = `<p class="results-empty">${t().testimonyEmpty}</p>`;
+    return;
+  }
+
+  container.innerHTML = prayers
+    .slice(0, 30)
+    .map((item) => {
+      const name = escapeHtml(item.name) || t().testimonyAnonymous;
+      const message = item.message ? escapeHtml(item.message) : "";
+      const verseEntry = CURATED_VERSES.find((v) => v.key === item.verse);
+      const verseText = item.verse
+        ? escapeHtml(verseEntry ? (lang === "ar" ? verseEntry.label_ar : verseEntry.label_en) : item.verse)
+        : "";
+      return `
+        <article class="prayer-card">
+          ${verseText ? `<p class="prayer-card__verse">${verseText}</p>` : ""}
+          ${message ? `<p class="prayer-card__message">${message}</p>` : ""}
+          <p class="prayer-card__name">${name}</p>
+        </article>`;
+    })
+    .join("");
+}
+
+async function loadPrayersFeed(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = `<p class="results-loading">${t().testimonyLoading}</p>`;
+  try {
+    const res = await fetch("/api/prayers");
+    if (!res.ok) throw new Error("bad response");
+    const data = await res.json();
+    renderPrayersFeed(containerId, data.prayers || []);
+  } catch (err) {
+    container.innerHTML = `<p class="results-empty">${t().testimonyError}</p>`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initVersePicker();
+
+  const form = document.getElementById("prayer-form");
+  if (form) form.addEventListener("submit", submitPrayer);
+
+  document.querySelectorAll("[data-prayers-feed]").forEach((el) => loadPrayersFeed(el.id));
+});
+
+document.addEventListener("langchange", () => {
+  initVersePicker();
+  document.querySelectorAll("[data-prayers-feed]").forEach((el) => loadPrayersFeed(el.id));
+});

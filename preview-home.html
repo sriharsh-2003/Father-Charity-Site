@@ -288,6 +288,24 @@ p { margin: 0 0 var(--space-4); }
   color: var(--color-surface);
   padding-block: var(--space-9);
 }
+.hero__layout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+.hero__portrait { flex: 0 0 auto; }
+.hero__portrait img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: block;
+}
+.hero__text { flex: 1 1 auto; min-width: 0; }
+@media (max-width: 760px) {
+  .hero__layout { flex-direction: column; text-align: center; }
+  .hero__portrait img { width: 150px; height: 150px; }
+  .hero__actions { justify-content: center; }
+}
 .hero h1 { color: #fff; }
 .hero .text-muted { color: rgba(250, 248, 243, 0.78); }
 .hero__actions { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
@@ -518,6 +536,56 @@ p { margin: 0 0 var(--space-4); }
 .visitation-item__notes { color: var(--color-ink-600); font-size: var(--font-size-body-s); }
 
 /* =========================================================================
+   PRAYERS FEED (scrolling cards, replaces the vision/mission/values section)
+   ========================================================================= */
+.prayers-feed {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block: var(--space-2) var(--space-4);
+  scrollbar-width: thin;
+}
+.prayer-card {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 260px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.prayer-card__verse { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); font-size: var(--font-size-body-s); margin: 0; }
+.prayer-card__message { margin: 0; font-size: var(--font-size-body-s); }
+.prayer-card__name { margin: 0; color: var(--color-ink-600); font-size: var(--font-size-caption); }
+@media (max-width: 600px) {
+  .prayer-card { width: 74vw; }
+}
+
+/* =========================================================================
+   VERSE PICKER + PRAYER FORM
+   ========================================================================= */
+#verse-picker { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+#verse-open-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-body-s); }
+
+/* =========================================================================
+   DIRECTIONS MODULE
+   ========================================================================= */
+.directions-box {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.directions-box__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+
+/* =========================================================================
    UTILITIES
    ========================================================================= */
 .visually-hidden {
@@ -542,7 +610,7 @@ p { margin: 0 0 var(--space-4); }
       <ul>
         <li><a href="index.html" aria-current="page"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></li>
         <li><a href="grave-locator.html"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></a></li>
-        <li><a href="testimonies.html"><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></a></li>
+        <li><a href="pray.html"><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></a></li>
         <li><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></li>
         <li><a href="donate.html"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></a></li>
       </ul>
@@ -555,25 +623,34 @@ p { margin: 0 0 var(--space-4); }
 </header>
 
 <section class="hero">
-  <div class="container">
-    <p class="eyebrow" style="color: rgba(250,248,243,0.85);">
-      <span class="i18n-ar">في ذكرى</span><span class="i18n-en">In loving memory</span>
-    </p>
-    <h1 class="prose">
-      <span class="i18n-ar">[اسم الوالد رحمه الله]: صدقة جارية وأثر باقٍ</span>
-      <span class="i18n-en">[Father's Name]: an ongoing charity, a lasting legacy</span>
-    </h1>
-    <p class="prose text-muted">
-      <span class="i18n-ar">هذه المنصة تحفظ ذكراه، وتيسّر الدعاء له وزيارة موضع دفنه، وتقدّم محتوى يخدم من أراد الاستفادة والأجر المتصل.</span>
-      <span class="i18n-en">This platform keeps his memory, makes it easy to pray for him and find where he is laid to rest, and shares content for anyone seeking benefit and ongoing reward.</span>
-    </p>
-    <div class="hero__actions">
-      <a class="btn btn--primary" href="grave-locator.html">
-        <span class="i18n-ar">زيارة موضع دفنه</span><span class="i18n-en">Visit his resting place</span>
-      </a>
-      <a class="btn btn--secondary" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.5);" href="knowledge-hub.html">
-        <span class="i18n-ar">تصفّح منصة المعرفة</span><span class="i18n-en">Browse the knowledge hub</span>
-      </a>
+  <div class="container hero__layout">
+    <div class="hero__portrait">
+      <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDAwIDQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0icG9ydHJhaXRUaXRsZSI+CiAgPHRpdGxlIGlkPSJwb3J0cmFpdFRpdGxlIj5QbGFjZWhvbGRlciBwb3J0cmFpdDwvdGl0bGU+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxNDUyM2YiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMGQzYjJlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGNsaXBQYXRoIGlkPSJjaXJjbGVDbGlwIj4KICAgICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxOTAiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgoKICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTE3YTM0IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjIgNiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjY2lyY2xlQ2xpcCkiPgogICAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPgogICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTcwIiByPSI3MiIgZmlsbD0iI2YzZWFkNCIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNIDcwIDQwMCBDIDcwIDI4MCAxMjAgMjM1IDIwMCAyMzUgQyAyODAgMjM1IDMzMCAyODAgMzMwIDQwMCBaIiBmaWxsPSIjZjNlYWQ0IiBvcGFjaXR5PSIwLjkiLz4KICA8L2c+CgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTkwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmYWY4ZjMiIHN0cm9rZS13aWR0aD0iNiIvPgo8L3N2Zz4K" alt="" width="220" height="220">
+    </div>
+    <div class="hero__text">
+      <p class="eyebrow" style="color: rgba(250,248,243,0.85);">
+        <span class="i18n-ar">في ذكرى</span><span class="i18n-en">In loving memory</span>
+      </p>
+      <h1 class="prose">
+        <span class="i18n-ar">[اسم الوالد رحمه الله]: صدقة جارية وأثر باقٍ</span>
+        <span class="i18n-en">[Father's Name]: an ongoing charity, a lasting legacy</span>
+      </h1>
+      <p class="prose text-muted">
+        <span class="i18n-ar">هذه المنصة تحفظ ذكراه، وتيسّر الدعاء له وزيارة موضع دفنه، وتقدّم محتوى يخدم من أراد الاستفادة والأجر المتصل.</span>
+        <span class="i18n-en">This platform keeps his memory, makes it easy to pray for him and find where he is laid to rest, and shares content for anyone seeking benefit and ongoing reward.</span>
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="pray.html">
+          <span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span>
+        </a>
+        <a class="btn btn--secondary" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.5);" href="grave-locator.html">
+          <span class="i18n-ar">زيارة موضع دفنه</span><span class="i18n-en">Visit his resting place</span>
+        </a>
+      </div>
+      <div class="share-widget" data-share data-name-ar="[اسم الوالد]" data-name-en="[Father's Name]" data-url="" style="margin-top: var(--space-4);">
+        <button class="btn btn--ghost btn--sm" style="color:#fff; border-color:rgba(255,255,255,0.4);" data-share-trigger></button>
+        <div class="share-menu" data-share-menu></div>
+      </div>
     </div>
   </div>
 </section>
@@ -604,44 +681,13 @@ p { margin: 0 0 var(--space-4); }
 
 <section class="section section--tinted">
   <div class="container">
-    <div class="card-grid">
-      <div class="card">
-        <h3><span class="i18n-ar">الرؤية</span><span class="i18n-en">Vision</span></h3>
-        <p class="i18n-ar">[نص قابل للتعديل] أن يبقى أثره حاضرًا، وأن يستفيد منه كل من يزور هذه المنصة.</p>
-        <p class="i18n-en">[Editable text] For his impact to remain present, and for everyone who visits this platform to benefit from it.</p>
-      </div>
-      <div class="card">
-        <h3><span class="i18n-ar">الرسالة</span><span class="i18n-en">Mission</span></h3>
-        <p class="i18n-ar">[نص قابل للتعديل] تيسير الدعاء والزيارة ونشر محتوى نافع باسمه.</p>
-        <p class="i18n-en">[Editable text] Making it easy to pray, to visit, and to share beneficial content in his name.</p>
-      </div>
-      <div class="card">
-        <h3><span class="i18n-ar">القيم</span><span class="i18n-en">Values</span></h3>
-        <p class="i18n-ar">[نص قابل للتعديل] الإخلاص، البرّ، الاستمرارية.</p>
-        <p class="i18n-en">[Editable text] Sincerity, devotion, continuity.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <div class="flex-between" style="margin-bottom: var(--space-5);">
-      <div>
-        <p class="eyebrow"><span class="i18n-ar">شارك في الأجر</span><span class="i18n-en">Take part</span></p>
-        <h2><span class="i18n-ar">ادعُ له وشارك صفحته</span><span class="i18n-en">Pray for him and share this page</span></h2>
-      </div>
-      <div style="display:flex; gap: var(--space-3); align-items:center;">
-        <button class="pray-btn" data-pray data-pray-id="home-general">
-          <span data-pray-label></span>
-        </button>
-        <div class="share-widget" data-share data-name-ar="[اسم الوالد]" data-name-en="[Father's Name]" data-url="">
-          <button class="btn btn--secondary" data-share-trigger></button>
-          <div class="share-menu" data-share-menu></div>
-        </div>
-      </div>
-    </div>
-    <p class="text-muted" data-pray-count-label></p>
+    <p class="eyebrow"><span class="i18n-ar">من دعا له</span><span class="i18n-en">Who has prayed for him</span></p>
+    <h2><span class="i18n-ar">دعوات من زوار هذه الصفحة</span><span class="i18n-en">Prayers from visitors to this page</span></h2>
+    <p class="text-muted" id="prayers-feed-count"></p>
+    <div id="prayers-feed" data-prayers-feed class="prayers-feed"></div>
+    <a class="btn btn--secondary" href="pray.html" style="margin-top: var(--space-4);">
+      <span class="i18n-ar">ادعُ له أنت أيضًا</span><span class="i18n-en">Pray for him too</span>
+    </a>
   </div>
 </section>
 
@@ -666,7 +712,7 @@ p { margin: 0 0 var(--space-4); }
       </div>
     </div>
     <div class="footer-bottom">
-      <span><span class="i18n-ar">جميع الحقوق محفوظة © [السنة]</span><span class="i18n-en">All rights reserved © [year]</span></span>
+      <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
     </div>
   </div>
 </footer>
@@ -681,6 +727,35 @@ p { margin: 0 0 var(--space-4); }
   </button>
 </div>
 
+<script>
+/*
+  Curated verses for the "pray for him" flow.
+
+  These are a STARTING list, not a final religious decision on my part.
+  Sourced from commonly cited verses/duas for the deceased (Quran.com's own
+  "Duas for the Dead" collection at quran.com/duas/deceased, plus Surah
+  Yaseen and Surah Al-Ikhlas, both widely cited in fiqh discussions on
+  graveside recitation). Please have someone with religious authority review
+  this list before it goes live, practice varies by school of thought (for
+  example, some scholars discourage collective Al-Fatiha recitation for the
+  deceased specifically, while treating it as fine individually), and that
+  is not a judgment call for a website builder to make alone.
+
+  "url" opens the exact verse or surah on quran.com in a new tab, where it
+  can be read and played with quran.com's own player. See README-handoff.md
+  for why this links out rather than embedding audio directly.
+*/
+
+const CURATED_VERSES = [
+  { id: "1", key: "1", label_ar: "سورة الفاتحة", label_en: "Surah Al-Fatiha", url: "https://quran.com/1" },
+  { id: "2", key: "2:255", label_ar: "آية الكرسي", label_en: "Ayat al-Kursi (2:255)", url: "https://quran.com/2/255" },
+  { id: "3", key: "36", label_ar: "سورة يس", label_en: "Surah Yaseen", url: "https://quran.com/36" },
+  { id: "4", key: "112", label_ar: "سورة الإخلاص", label_en: "Surah Al-Ikhlas", url: "https://quran.com/112" },
+  { id: "5", key: "2:286", label_ar: "خاتمة سورة البقرة", label_en: "Closing verse of Al-Baqarah (2:286)", url: "https://quran.com/2/286" },
+  { id: "6", key: "23:40-41", label_ar: "دعاء للوالدين (المؤمنون ٤٠-٤١)", label_en: "Dua for parents (Al-Mu'minun 40-41)", url: "https://quran.com/23/40-41" },
+];
+
+</script>
 <script>
 /*
   Language switching.
@@ -702,9 +777,6 @@ const UI_STRINGS = {
     shareCopied: "تم نسخ الرابط",
     shareNative: "مشاركة عبر التطبيقات",
     shareMessage: (name) => `ادعوا لـ ${name} بالرحمة والمغفرة`,
-    prayDefault: "ادعُ له",
-    prayDone: "دعوت له",
-    prayCount: (n) => `${n} دعوة من جهازك`,
     searchLoading: "جارٍ تحميل السجلات...",
     searchEmpty: "لا توجد نتائج مطابقة. جرّب اسمًا أو تاريخًا مختلفًا.",
     searchError: "تعذّر تحميل بيانات المقابر. حاول تحديث الصفحة.",
@@ -716,9 +788,16 @@ const UI_STRINGS = {
     testimonyError: "تعذّر إرسال الرسالة. حاول مرة أخرى.",
     testimonyDuplicate: "يبدو أن هذه الرسالة أُرسلت للتو.",
     testimonyRateLimited: "الرجاء الانتظار قليلاً قبل الإرسال مرة أخرى.",
-    testimonyLoading: "جارٍ تحميل الرسائل...",
-    testimonyEmpty: "كن أول من يترك كلمة.",
-    testimonyCount: (n) => `${n} رسالة`,
+    testimonyLoading: "جارٍ تحميل الدعوات...",
+    testimonyEmpty: "كن أول من يدعو له.",
+    testimonyCount: (n) => `${n} دعوة`,
+    directionsFrom: "من أين ستبدأ؟",
+    directionsUseLocation: "استخدام موقعي الحالي",
+    directionsLocating: "جارٍ تحديد الموقع...",
+    directionsLocationError: "تعذّر تحديد الموقع. أدخل نقطة البداية يدويًا.",
+    directionsGetGoogle: "المسار عبر خرائط جوجل",
+    directionsGetApple: "المسار عبر خرائط آبل",
+    directionsTransitNote: "لأوقات المترو والحافلات الدقيقة والحالية، يُنصح أيضًا بمراجعة تطبيق درب الرسمي.",
   },
   en: {
     shareTitle: "Share",
@@ -729,9 +808,6 @@ const UI_STRINGS = {
     shareCopied: "Link copied",
     shareNative: "Share",
     shareMessage: (name) => `Please pray for ${name}, mercy and forgiveness`,
-    prayDefault: "Pray for them",
-    prayDone: "You prayed",
-    prayCount: (n) => `${n} prayers from your device`,
     searchLoading: "Loading records...",
     searchEmpty: "No matching results. Try a different name or date.",
     searchError: "Could not load grave records. Try refreshing the page.",
@@ -743,9 +819,16 @@ const UI_STRINGS = {
     testimonyError: "Could not send your message. Please try again.",
     testimonyDuplicate: "It looks like this message was just sent.",
     testimonyRateLimited: "Please wait a moment before submitting again.",
-    testimonyLoading: "Loading messages...",
-    testimonyEmpty: "Be the first to leave a word.",
-    testimonyCount: (n) => `${n} messages`,
+    testimonyLoading: "Loading prayers...",
+    testimonyEmpty: "Be the first to pray for him.",
+    testimonyCount: (n) => `${n} prayers`,
+    directionsFrom: "Where are you starting from?",
+    directionsUseLocation: "Use my current location",
+    directionsLocating: "Finding your location...",
+    directionsLocationError: "Could not find your location. Enter a starting point manually.",
+    directionsGetGoogle: "Directions via Google Maps",
+    directionsGetApple: "Directions via Apple Maps",
+    directionsTransitNote: "For exact, current metro and bus times, it's also worth checking the official Darb app.",
   },
 };
 
@@ -784,10 +867,18 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
 /* Mobile nav toggle */
 
+// Dynamic footer year: replaces a hardcoded [year] placeholder that goes
+// stale every January. Any element with data-current-year gets this set.
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-current-year]").forEach((el) => {
+    el.textContent = new Date().getFullYear();
+  });
+});
+
 // Shared HTML-escaping helper. Anything that comes from a CSV file or a
 // user submission is untrusted content and must go through this before it
 // touches innerHTML or an HTML attribute. Used by grave-locator.js,
-// visitation-dates.js, and the testimonies page.
+// visitation-dates.js, and the pray page.
 function escapeHtml(value) {
   return (value ?? "")
     .toString()
@@ -798,7 +889,8 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-document.addEventListener("DOMContentLoaded", () => {  const navBtn = document.querySelector("[data-nav-toggle]");
+document.addEventListener("DOMContentLoaded", () => {
+  const navBtn = document.querySelector("[data-nav-toggle]");
   const nav = document.querySelector("[data-main-nav]");
   if (navBtn && nav) {
     navBtn.addEventListener("click", () => {
@@ -946,79 +1038,7 @@ document.addEventListener("DOMContentLoaded", initShareWidgets);
 document.addEventListener("langchange", initShareWidgets);
 
 </script>
-<script>
-/*
-  Pray button.
-
-  IMPORTANT LIMITATION (flagged here on purpose, and in the handoff notes):
-  This is per-device only, stored in localStorage. It is NOT a real IP-based
-  or account-based tracker, and it cannot show a shared "1,204 people have
-  prayed for him" count across all visitors. That would need a server and a
-  database, which the brief explicitly ruled out for the MVP. What it CAN do,
-  with zero data collection: remember on this browser/device whether this
-  person prayed for a given grave, so the button does not reset every visit.
-
-  Markup contract:
-  <button class="pray-btn" data-pray data-pray-id="grave-0007">
-    <span data-pray-label></span>
-  </button>
-  <span class="text-muted" data-pray-count-label></span>  (optional, sitewide total)
-*/
-
-function prayedIds() {
-  try {
-    return JSON.parse(localStorage.getItem("prayed_ids") || "[]");
-  } catch (e) {
-    return [];
-  }
-}
-
-function markPrayed(id) {
-  const ids = prayedIds();
-  if (!ids.includes(id)) {
-    ids.push(id);
-    localStorage.setItem("prayed_ids", JSON.stringify(ids));
-  }
-  return ids.length;
-}
-
-function renderPrayButton(btn) {
-  const id = btn.dataset.prayId;
-  const label = btn.querySelector("[data-pray-label]") || btn;
-  const already = prayedIds().includes(id);
-  btn.setAttribute("aria-pressed", String(already));
-  btn.disabled = already;
-  label.textContent = already ? t().prayDone : t().prayDefault;
-}
-
-function renderPrayCounters() {
-  const total = prayedIds().length;
-  document.querySelectorAll("[data-pray-count-label]").forEach((el) => {
-    el.textContent = t().prayCount(total);
-  });
-}
-
-function initPrayButtons() {
-  document.querySelectorAll("[data-pray]").forEach((btn) => {
-    renderPrayButton(btn);
-    if (btn.dataset.prayBound) return;
-    btn.dataset.prayBound = "1";
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.prayId;
-      if (!id) return;
-      markPrayed(id);
-      renderPrayButton(btn);
-      renderPrayCounters();
-      showToast(t().prayDone, "success");
-    });
-  });
-  renderPrayCounters();
-}
-
-document.addEventListener("DOMContentLoaded", initPrayButtons);
-document.addEventListener("langchange", initPrayButtons);
-
-</script>
+<!-- pray.js skipped: this preview has no /api/prayers backend to call, the feed will show a loading state -->
 <!-- visitation dates CSV fetch skipped in this standalone preview -->
 </body>
 </html>

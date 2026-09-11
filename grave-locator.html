@@ -23,7 +23,7 @@
       <ul>
         <li><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></li>
         <li><a href="grave-locator.html" aria-current="page"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></a></li>
-        <li><a href="testimonies.html"><span class="i18n-ar">دعوات وشهادات</span><span class="i18n-en">Prayers &amp; Testimonies</span></a></li>
+        <li><a href="pray.html"><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></a></li>
         <li><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></li>
         <li><a href="donate.html"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></a></li>
       </ul>
@@ -40,41 +40,34 @@
     <p class="eyebrow"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></p>
     <h1><span class="i18n-ar">موضع دفنه</span><span class="i18n-en">His resting place</span></h1>
     <p class="text-muted prose">
-      <span class="i18n-ar">تفاصيل موضع دفن [اسم الوالد]، مع رقم القبر وموقعه على الخريطة لمن أراد الزيارة. يمكن لاحقًا إضافة أفراد آخرين من العائلة أو الوقف بنفس الطريقة، ولذلك بقي البحث بالاسم والتاريخ متاحًا.</span>
-      <span class="i18n-en">Details of where [Father's Name] is laid to rest, with the grave number and its location on the map for anyone who wants to visit. Other family or endowment members can be added the same way later, which is why search by name and date stays available.</span>
+      <span class="i18n-ar">تفاصيل موضع دفن [اسم الوالد]، مع رقم القبر وموقعه على الخريطة لمن أراد الزيارة.</span>
+      <span class="i18n-en">Details of where [Father's Name] is laid to rest, with the grave number and its location on the map for anyone who wants to visit.</span>
     </p>
-
-    <form class="search-bar" id="search-form">
-      <div class="field">
-        <label for="search-name"><span class="i18n-ar">الاسم</span><span class="i18n-en">Name</span></label>
-        <input type="search" id="search-name" placeholder="...">
-      </div>
-      <div class="field">
-        <label for="search-date"><span class="i18n-ar">التاريخ</span><span class="i18n-en">Date</span></label>
-        <input type="date" id="search-date">
-      </div>
-    </form>
   </div>
 </section>
 
 <section class="section--tight">
   <div class="container">
-    <p class="text-muted" id="results-count" style="margin-bottom: var(--space-4);"></p>
     <div class="results-layout">
       <div>
         <div class="results-list" id="results-list"></div>
-        <div class="pagination" id="pagination"></div>
-      </div>
-      <div id="map" role="application" aria-label="Grave locations map"></div>
-    </div>
-  </div>
-</section>
 
-<section class="section--tight">
-  <div class="container">
-    <div class="notice notice--info prose">
-      <span class="i18n-ar">هذه الصفحة مُعدّة يدويًا حاليًا لتوضيح موضع دفن [اسم الوالد]. إن رغبت العائلة بإضافة أفراد آخرين لاحقًا، تُضاف بياناتهم بنفس الطريقة في ملف السجلات.</span>
-      <span class="i18n-en">This page is currently prepared by hand to show where [Father's Name] is laid to rest. If the family wants to add other family members later, their records can be added the same way in the records file.</span>
+        <div class="directions-box" id="directions-box" style="margin-top: var(--space-5);" hidden>
+          <h3 style="margin:0;"><span class="i18n-ar">الحصول على الاتجاهات</span><span class="i18n-en">Get directions</span></h3>
+          <div class="field" style="margin:0;">
+            <label for="directions-from" data-i18n-directions-from></label>
+            <input type="text" id="directions-from" placeholder="">
+          </div>
+          <button class="btn btn--ghost btn--sm" type="button" id="directions-use-location" style="align-self:flex-start;"></button>
+          <p class="text-muted" id="directions-status" style="margin:0; font-size: var(--font-size-body-s);"></p>
+          <div class="directions-box__actions">
+            <a class="btn btn--primary btn--sm" id="directions-google" href="#" target="_blank" rel="noopener noreferrer"></a>
+            <a class="btn btn--secondary btn--sm" id="directions-apple" href="#" target="_blank" rel="noopener noreferrer"></a>
+          </div>
+          <p class="text-muted" id="directions-transit-note" style="margin:0; font-size: var(--font-size-caption);"></p>
+        </div>
+      </div>
+      <div id="map" role="application" aria-label="Grave location map"></div>
     </div>
   </div>
 </section>
@@ -92,7 +85,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span><span class="i18n-ar">جميع الحقوق محفوظة © [السنة]</span><span class="i18n-en">All rights reserved © [year]</span></span>
+      <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
     </div>
   </div>
 </footer>
@@ -102,7 +95,6 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/common.js"></script>
 <script src="assets/js/share.js"></script>
-<script src="assets/js/pray.js"></script>
 <script src="assets/js/grave-locator.js"></script>
 </body>
 </html>

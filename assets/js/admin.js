@@ -5,15 +5,16 @@ async function loadAdminList() {
   const list = document.getElementById("admin-list");
   status.textContent = "Loading...";
   try {
-    const res = await fetch("/api/testimonies");
+    const res = await fetch("/api/prayers");
     const data = await res.json();
-    const items = data.testimonies || [];
-    status.textContent = `${items.length} testimonies`;
+    const items = data.prayers || [];
+    status.textContent = `${items.length} prayers`;
     list.innerHTML = items
       .map(
         (item) => `
         <article class="card">
-          <p>${escapeHtml(item.message)}</p>
+          ${item.verse ? `<p class="text-muted" style="font-size: var(--font-size-body-s); margin:0 0 4px;">Verse: ${escapeHtml(item.verse)}</p>` : ""}
+          <p>${item.message ? escapeHtml(item.message) : "<em>(no message, prayer only)</em>"}</p>
           <p class="text-muted" style="font-size: var(--font-size-body-s);">
             ${escapeHtml(item.name) || "Anonymous"} &middot; ${escapeHtml(item.createdAt)}
           </p>
@@ -25,9 +26,9 @@ async function loadAdminList() {
 
     list.querySelectorAll("[data-delete-id]").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("Delete this testimony? This cannot be undone.")) return;
+        if (!confirm("Delete this prayer entry? This cannot be undone.")) return;
         btn.disabled = true;
-        const res = await fetch(`/api/testimonies?id=${encodeURIComponent(btn.dataset.deleteId)}`, {
+        const res = await fetch(`/api/prayers?id=${encodeURIComponent(btn.dataset.deleteId)}`, {
           method: "DELETE",
           headers: { "x-admin-token": ADMIN_TOKEN },
         });
@@ -40,7 +41,7 @@ async function loadAdminList() {
       });
     });
   } catch (err) {
-    status.textContent = "Could not load testimonies.";
+    status.textContent = "Could not load prayers.";
   }
 }
 

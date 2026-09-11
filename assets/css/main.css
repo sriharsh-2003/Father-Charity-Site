@@ -196,6 +196,24 @@ p { margin: 0 0 var(--space-4); }
   color: var(--color-surface);
   padding-block: var(--space-9);
 }
+.hero__layout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+.hero__portrait { flex: 0 0 auto; }
+.hero__portrait img {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  display: block;
+}
+.hero__text { flex: 1 1 auto; min-width: 0; }
+@media (max-width: 760px) {
+  .hero__layout { flex-direction: column; text-align: center; }
+  .hero__portrait img { width: 150px; height: 150px; }
+  .hero__actions { justify-content: center; }
+}
 .hero h1 { color: #fff; }
 .hero .text-muted { color: rgba(250, 248, 243, 0.78); }
 .hero__actions { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
@@ -424,6 +442,56 @@ p { margin: 0 0 var(--space-4); }
 .visitation-item__date { font-weight: var(--font-weight-semibold); color: var(--color-primary-900); }
 .visitation-item__title { font-weight: var(--font-weight-medium); }
 .visitation-item__notes { color: var(--color-ink-600); font-size: var(--font-size-body-s); }
+
+/* =========================================================================
+   PRAYERS FEED (scrolling cards, replaces the vision/mission/values section)
+   ========================================================================= */
+.prayers-feed {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block: var(--space-2) var(--space-4);
+  scrollbar-width: thin;
+}
+.prayer-card {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 260px;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.prayer-card__verse { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); font-size: var(--font-size-body-s); margin: 0; }
+.prayer-card__message { margin: 0; font-size: var(--font-size-body-s); }
+.prayer-card__name { margin: 0; color: var(--color-ink-600); font-size: var(--font-size-caption); }
+@media (max-width: 600px) {
+  .prayer-card { width: 74vw; }
+}
+
+/* =========================================================================
+   VERSE PICKER + PRAYER FORM
+   ========================================================================= */
+#verse-picker { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+#verse-open-link { display: inline-block; margin-top: var(--space-3); font-size: var(--font-size-body-s); }
+
+/* =========================================================================
+   DIRECTIONS MODULE
+   ========================================================================= */
+.directions-box {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.directions-box__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
 /* =========================================================================
    UTILITIES

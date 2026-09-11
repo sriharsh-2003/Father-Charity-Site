@@ -1,47 +1,44 @@
-// /api/testimonies
+// /api/prayers
 //
-// The one write-capable endpoint on this site. Everything else is static.
+// Replaces /api/testimonies. Same idea (the one write-capable endpoint on
+// the site), extended with an optional "verse" field so a prayer can carry
+// which Quran verse the person chose (or "random") alongside their name and
+// message. The GET response's length IS the real, shared prayer count,
+// there is no separate counter to keep in sync.
 //
-// STORAGE: Upstash Redis, connected through Vercel Marketplace (Vercel's
-// own KV product was retired and folded into the Marketplace in Dec 2024,
-// so Upstash is the direct successor, not a workaround). Set these two
-// environment variables in the Vercel project after installing the
-// integration (Vercel injects them automatically if you use the Marketplace
-// install flow):
-//   UPSTASH_REDIS_REST_URL
-//   UPSTASH_REDIS_REST_TOKEN
-// Also set, by hand, a long random secret used only by the admin page:
-//   ADMIN_TOKEN
+// STORAGE: Upstash Redis via Vercel Marketplace. Vercel's own KV product
+// was retired and folded into the Marketplace in Dec 2024, Upstash is the
+// direct successor. The Marketplace integration names its env vars
+// KV_REST_API_URL / KV_REST_API_TOKEN (it also provides REDIS_URL, which
+// this code does not use, the REST API is simpler for serverless). This
+// file checks a couple of possible names so it works whether you're using
+// the Marketplace's default naming or renamed them yourself:
+//   KV_REST_API_URL / KV_REST_API_TOKEN        (Vercel Marketplace default)
+//   UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN  (manual Upstash setup)
 //
-// DATA SHAPE: a single Redis list, one JSON string per testimony:
-//   { id, name, message, createdAt }
+// Also set, by hand, in Vercel's Environment Variables:
+//   ADMIN_TOKEN   (a long random secret, used only by admin.html)
 //
-// SECURITY MODEL (deliberately minimal, matching the "no accounts" brief):
-//   - POST is public (anyone can submit a testimony), but rate-limited per
-//     IP and deduplicated so the same person can't flood the list.
-//   - GET is public (the page needs to read the list to display it).
-//   - DELETE requires the ADMIN_TOKEN as a header. There is no login page,
-//     no session, no password recovery, just one shared secret. That's the
-//     right amount of security for "one or two trusted people occasionally
-//     remove an inappropriate entry" and the wrong amount for anything with
-//     real named user accounts, if this grows, replace this with real auth.
+// DATA SHAPE: one JSON string per prayer in a single Redis list:
+//   { id, name, verse, message, createdAt }
+//   name and message are optional. verse is a short code like "2:255" or
+//   "random", set by the frontend from the curated list in pray.js.
 
 import crypto from "node:crypto";
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
-const LIST_KEY = "testimonies:list";
-const MAX_ENTRIES = 1000;         // oldest entries fall off past this
+const LIST_KEY = "prayers:list";
+const MAX_ENTRIES = 2000;         // oldest entries fall off past this
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_NAME_LENGTH = 80;
+const MAX_VERSE_LENGTH = 20;
 const RATE_LIMIT_WINDOW_SECONDS = 60;
-const RATE_LIMIT_MAX_PER_WINDOW = 3;
-const DEDUPE_WINDOW_SECONDS = 3600;
+const RATE_LIMIT_MAX_PER_WINDOW = 5;
+const DEDUPE_WINDOW_SECONDS = 30; // guards against double-tap/double-submit, not repeat prayer over time
 
-// Upstash's REST API takes plain HTTP calls, so no SDK dependency is
-// required, one less thing to install and keep updated.
 async function redis(command) {
   const res = await fetch(REDIS_URL, {
     method: "POST",
@@ -70,17 +67,17 @@ function hash(value) {
 
 export default async function handler(req, res) {
   if (!REDIS_URL || !REDIS_TOKEN) {
-    res.status(500).json({ error: "Storage is not configured yet." });
+    res.status(500).json({ error: "Storage is not configured yet. Check KV_REST_API_URL / KV_REST_API_TOKEN in Vercel." });
     return;
   }
 
   if (req.method === "GET") {
     try {
       const raw = await redis(["LRANGE", LIST_KEY, "0", "-1"]);
-      const testimonies = (raw || []).map((item) => JSON.parse(item));
-      res.status(200).json({ testimonies });
+      const prayers = (raw || []).map((item) => JSON.parse(item));
+      res.status(200).json({ prayers, count: prayers.length });
     } catch (err) {
-      res.status(500).json({ error: "Could not load testimonies." });
+      res.status(500).json({ error: "Could not load prayers." });
     }
     return;
   }
@@ -89,8 +86,7 @@ export default async function handler(req, res) {
     const ip = getClientIp(req);
 
     try {
-      // Rate limit: at most a few submissions per IP per minute.
-      const rateKey = `ratelimit:testimonies:${ip}`;
+      const rateKey = `ratelimit:prayers:${ip}`;
       const count = await redis(["INCR", rateKey]);
       if (count === 1) await redis(["EXPIRE", rateKey, String(RATE_LIMIT_WINDOW_SECONDS)]);
       if (count > RATE_LIMIT_MAX_PER_WINDOW) {
@@ -98,8 +94,6 @@ export default async function handler(req, res) {
         return;
       }
     } catch (err) {
-      // If rate limiting itself fails, fail closed on submission rather
-      // than silently allowing unlimited posts.
       res.status(500).json({ error: "Could not process submission right now." });
       return;
     }
@@ -107,20 +101,16 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const message = typeof body.message === "string" ? body.message.trim() : "";
     const name = typeof body.name === "string" ? body.name.trim() : "";
-
-    if (!message) {
-      res.status(400).json({ error: "A message is required." });
-      return;
-    }
+    const verse = typeof body.verse === "string" ? body.verse.trim() : "";
 
     const cleanMessage = message.slice(0, MAX_MESSAGE_LENGTH);
     const cleanName = name.slice(0, MAX_NAME_LENGTH);
+    const cleanVerse = verse.slice(0, MAX_VERSE_LENGTH);
 
     try {
-      // Duplicate guard: same IP submitting the same text again within the
-      // window gets rejected, this is what "no duplicates" means here,
-      // since there are no user accounts to key a duplicate check on.
-      const dedupeKey = `dedupe:testimonies:${ip}:${hash(cleanMessage)}`;
+      // Guards against a double-tap or double form submit, not against
+      // someone genuinely praying again later, that's allowed and expected.
+      const dedupeKey = `dedupe:prayers:${ip}:${hash(cleanMessage + cleanVerse)}`;
       const seen = await redis(["GET", dedupeKey]);
       if (seen) {
         res.status(409).json({ error: "This looks like a duplicate submission." });
@@ -131,16 +121,17 @@ export default async function handler(req, res) {
       const entry = {
         id: crypto.randomUUID(),
         name: cleanName || null,
-        message: cleanMessage,
+        verse: cleanVerse || null,
+        message: cleanMessage || null,
         createdAt: new Date().toISOString(),
       };
 
       await redis(["LPUSH", LIST_KEY, JSON.stringify(entry)]);
       await redis(["LTRIM", LIST_KEY, "0", String(MAX_ENTRIES - 1)]);
 
-      res.status(201).json({ testimony: entry });
+      res.status(201).json({ prayer: entry });
     } catch (err) {
-      res.status(500).json({ error: "Could not save the testimony." });
+      res.status(500).json({ error: "Could not save the prayer." });
     }
     return;
   }
@@ -174,7 +165,7 @@ export default async function handler(req, res) {
       await redis(["LREM", LIST_KEY, "1", match]);
       res.status(200).json({ deleted: id });
     } catch (err) {
-      res.status(500).json({ error: "Could not delete the testimony." });
+      res.status(500).json({ error: "Could not delete the prayer." });
     }
     return;
   }

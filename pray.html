@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container site-header__bar">
+    <a class="brand" href="index.html">
+      <span class="brand__mark" aria-hidden="true">ﻭ</span>
+      <span class="i18n-ar">وقف [اسم الوالد]</span>
+      <span class="i18n-en">[Father's Name] Endowment</span>
+    </a>
+    <nav class="main-nav" data-main-nav>
+      <ul>
+        <li><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></li>
+        <li><a href="grave-locator.html"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></a></li>
+        <li><a href="pray.html" aria-current="page"><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></a></li>
+        <li><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></li>
+        <li><a href="donate.html"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="lang-toggle" data-lang-toggle type="button">English</button>
+      <button class="nav-toggle" data-nav-toggle type="button" aria-expanded="false" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<section class="section--tight" style="padding-top: var(--space-6);">
+  <div class="container prose">
+    <p class="eyebrow"><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></p>
+    <h1><span class="i18n-ar">اختر آية، وادعُ له</span><span class="i18n-en">Choose a verse, and pray for him</span></h1>
+    <p class="text-muted">
+      <span class="i18n-ar">اختر آية من القائمة، أو اختر عشوائيًا. بعدها يمكنك ترك اسمك وكلمة إن أحببت. هذه الصفحة عامة، ويمكنك العودة والدعاء له في أي وقت.</span>
+      <span class="i18n-en">Choose a verse below, or pick randomly. After that you can leave your name and a short word if you'd like. This page is public, and you're welcome to come back and pray again any time.</span>
+    </p>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container prose">
+    <div id="verse-picker"></div>
+    <a id="verse-open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+      <span class="i18n-ar">فتح الآية للاستماع أو القراءة على Quran.com ↗</span>
+      <span class="i18n-en">Open the verse to read or listen on Quran.com ↗</span>
+    </a>
+
+    <div id="prayer-form-section" hidden style="margin-top: var(--space-6);">
+      <form id="prayer-form" class="search-bar" style="flex-direction:column; align-items:stretch;">
+        <div class="field">
+          <label for="prayer-name">
+            <span class="i18n-ar">الاسم (اختياري)</span><span class="i18n-en">Name (optional)</span>
+          </label>
+          <input type="text" id="prayer-name" maxlength="80">
+        </div>
+        <div class="field">
+          <label for="prayer-message">
+            <span class="i18n-ar">كلمة (اختياري)</span><span class="i18n-en">A word, optional</span>
+          </label>
+          <textarea id="prayer-message" maxlength="500" rows="3"
+            style="border:1px solid var(--color-border); border-radius:var(--radius-s); padding:var(--space-3); font:inherit;"></textarea>
+        </div>
+        <div>
+          <button class="btn btn--primary" type="submit" id="prayer-submit">
+            <span class="i18n-ar">دعوت له</span><span class="i18n-en">I prayed for him</span>
+          </button>
+        </div>
+        <p class="text-muted" id="prayer-form-status" role="status" aria-live="polite" style="margin:0;"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight section--tinted">
+  <div class="container text-center prose">
+    <p><span class="i18n-ar">إن أردت المساهمة بأكثر من الدعاء</span><span class="i18n-en">If you'd like to contribute more than a prayer</span></p>
+    <a class="btn btn--secondary" href="donate.html">
+      <span class="i18n-ar">صفحة التبرع</span><span class="i18n-en">Go to the donation page</span>
+    </a>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container">
+    <p class="eyebrow"><span class="i18n-ar">من دعا له</span><span class="i18n-en">Who has prayed for him</span></p>
+    <p class="text-muted" id="prayers-feed-count"></p>
+    <div id="prayers-feed" data-prayers-feed class="prayers-feed"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">وقف [اسم الوالد]</span><span class="i18n-en">[Father's Name] Endowment</span></strong>
+      </div>
+      <div>
+        <strong style="color:#fff;"><span class="i18n-ar">روابط</span><span class="i18n-en">Links</span></strong>
+        <p><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></p>
+        <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/data/verses.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/pray.js"></script>
+</body>
+</html>

@@ -1,9 +1,17 @@
 /* Mobile nav toggle */
 
+// Dynamic footer year: replaces a hardcoded [year] placeholder that goes
+// stale every January. Any element with data-current-year gets this set.
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("[data-current-year]").forEach((el) => {
+    el.textContent = new Date().getFullYear();
+  });
+});
+
 // Shared HTML-escaping helper. Anything that comes from a CSV file or a
 // user submission is untrusted content and must go through this before it
 // touches innerHTML or an HTML attribute. Used by grave-locator.js,
-// visitation-dates.js, and the testimonies page.
+// visitation-dates.js, and the pray page.
 function escapeHtml(value) {
   return (value ?? "")
     .toString()
@@ -14,7 +22,8 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-document.addEventListener("DOMContentLoaded", () => {  const navBtn = document.querySelector("[data-nav-toggle]");
+document.addEventListener("DOMContentLoaded", () => {
+  const navBtn = document.querySelector("[data-nav-toggle]");
   const nav = document.querySelector("[data-main-nav]");
   if (navBtn && nav) {
     navBtn.addEventListener("click", () => {

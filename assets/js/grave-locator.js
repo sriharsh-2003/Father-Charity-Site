@@ -1,26 +1,28 @@
 /*
-  Grave locator.
+  Grave locator, simplified to a single record.
 
-  Data source: assets/data/graves.csv, a plain, hand-editable spreadsheet,
-  no database. Whoever maintains the site can open this file in Excel/Sheets,
-  add a row per grave, and re-upload it to the hosting. Columns are documented
-  at the top of that file.
+  This site is dedicated to one person, so there's no search or pagination
+  here anymore, just his record, loaded from the first row of
+  assets/data/graves.csv. The CSV format is unchanged (still hand-editable,
+  still has a grave_number column), this file just no longer searches
+  across many rows.
 
-  Map: Leaflet + OpenStreetMap tiles, both open source, no API key, no
-  vendor account needed. Coordinates come straight from the CSV.
+  Map: Leaflet + OpenStreetMap tiles, open source, no API key.
+
+  Directions: builds real Google Maps / Apple Maps deep links using the
+  grave's coordinates as the destination and either a typed starting point
+  or the visitor's own location (via the browser's geolocation prompt, only
+  when they click the button for it, never automatically). This does not
+  attempt to reproduce live metro/bus schedules, Google Maps' own transit
+  mode is asked to do that work, since it already has real, current transit
+  data for supported cities. See README-handoff.md for why.
 */
 
-const PAGE_SIZE = 6;
-let ALL_GRAVES = [];
-let FILTERED = [];
-let CURRENT_PAGE = 1;
-let MAP, MARKER_LAYER;
+let GRAVE = null;
+let MAP, MARKER;
+let USER_COORDS = null; // { lat, lng } if "use my location" succeeded
 
-function normalize(str) {
-  return (str || "").toString().trim().toLowerCase();
-}
-
-function loadGraves() {
+function loadGrave() {
   const listEl = document.getElementById("results-list");
   listEl.innerHTML = `<p class="results-loading" data-loading-label></p>`;
   document.querySelector("[data-loading-label]").textContent = t().searchLoading;
@@ -30,14 +32,14 @@ function loadGraves() {
     header: true,
     skipEmptyLines: true,
     complete: (results) => {
-      ALL_GRAVES = results.data.map((row) => ({
+      const rows = results.data.map((row) => ({
         ...row,
         latitude: parseFloat(row.latitude),
         longitude: parseFloat(row.longitude),
       }));
-      FILTERED = ALL_GRAVES.slice();
+      GRAVE = rows[0] || null;
       initMap();
-      renderResults();
+      renderGrave();
     },
     error: () => {
       listEl.innerHTML = `<p class="results-empty">${t().searchError}</p>`;
@@ -46,141 +48,145 @@ function loadGraves() {
 }
 
 function initMap() {
-  if (MAP) return;
-  MAP = L.map("map", { scrollWheelZoom: false }).setView([24.7136, 46.6753], 6); // default: Riyadh
+  if (MAP || !GRAVE) return;
+  const lat = Number.isNaN(GRAVE.latitude) ? 24.7136 : GRAVE.latitude;
+  const lng = Number.isNaN(GRAVE.longitude) ? 46.6753 : GRAVE.longitude;
+  MAP = L.map("map", { scrollWheelZoom: false }).setView([lat, lng], 15);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
     maxZoom: 19,
   }).addTo(MAP);
-  MARKER_LAYER = L.layerGroup().addTo(MAP);
-}
 
-function renderMarkers(records) {
-  if (!MARKER_LAYER) return;
-  MARKER_LAYER.clearLayers();
-  const bounds = [];
-  records.forEach((g) => {
-    if (Number.isNaN(g.latitude) || Number.isNaN(g.longitude)) return;
+  if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
     const lang = currentLang();
-    const name = lang === "ar" ? g.name_ar : g.name_en;
-    const marker = L.marker([g.latitude, g.longitude]).bindPopup(
-      `<strong>${escapeHtml(name)}</strong><br>${escapeHtml(t().viewOnMap)}: ${escapeHtml(g.grave_number)}`
-    );
-    MARKER_LAYER.addLayer(marker);
-    bounds.push([g.latitude, g.longitude]);
-  });
-  if (bounds.length) MAP.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+    const name = lang === "ar" ? GRAVE.name_ar : GRAVE.name_en;
+    MARKER = L.marker([lat, lng])
+      .addTo(MAP)
+      .bindPopup(`<strong>${escapeHtml(name)}</strong>`)
+      .openPopup();
+  }
 }
 
-function applyFilters() {
-  const nameQuery = normalize(document.getElementById("search-name").value);
-  const dateQuery = document.getElementById("search-date").value; // yyyy-mm-dd
-
-  FILTERED = ALL_GRAVES.filter((g) => {
-    const nameMatch =
-      !nameQuery ||
-      normalize(g.name_ar).includes(nameQuery) ||
-      normalize(g.name_en).includes(nameQuery);
-    const dateMatch =
-      !dateQuery || g.death_date === dateQuery || g.birth_date === dateQuery;
-    return nameMatch && dateMatch;
-  });
-  CURRENT_PAGE = 1;
-  renderResults();
-}
-
-function renderResults() {
+function renderGrave() {
   const listEl = document.getElementById("results-list");
-  const countEl = document.getElementById("results-count");
   const lang = currentLang();
 
-  countEl.textContent = t().resultsCount(FILTERED.length);
-
-  if (FILTERED.length === 0) {
+  if (!GRAVE) {
     listEl.innerHTML = `<p class="results-empty">${t().searchEmpty}</p>`;
-    renderMarkers([]);
-    renderPagination();
     return;
   }
 
-  const start = (CURRENT_PAGE - 1) * PAGE_SIZE;
-  const pageItems = FILTERED.slice(start, start + PAGE_SIZE);
+  const name = escapeHtml(lang === "ar" ? GRAVE.name_ar : GRAVE.name_en);
+  const notes = escapeHtml(lang === "ar" ? GRAVE.notes_ar : GRAVE.notes_en);
+  const address = escapeHtml(lang === "ar" ? GRAVE.address_ar : GRAVE.address_en);
 
-  listEl.innerHTML = pageItems
-    .map((g) => {
-      const name = escapeHtml(lang === "ar" ? g.name_ar : g.name_en);
-      const notes = escapeHtml(lang === "ar" ? g.notes_ar : g.notes_en);
-      const address = escapeHtml(lang === "ar" ? g.address_ar : g.address_en);
-      const graveId = `grave-${escapeHtml(g.id)}`;
-      return `
-        <article class="result-card">
-          <h3>${name || ""}</h3>
-          <div class="result-card__meta">
-            <span>${escapeHtml(g.birth_date) || "?"} - ${escapeHtml(g.death_date) || "?"}</span>
-            <span>${lang === "ar" ? "رقم القبر" : "Grave no."} ${escapeHtml(g.grave_number) || "?"}</span>
-            <span>${escapeHtml(g.section) || ""}</span>
-          </div>
-          ${address ? `<p class="text-muted">${address}</p>` : ""}
-          ${notes ? `<p>${notes}</p>` : ""}
-          <div class="result-card__actions">
-            <button class="pray-btn" data-pray data-pray-id="${graveId}">
-              <span data-pray-label></span>
-            </button>
-            <div class="share-widget" data-share
-                 data-name-ar="${escapeHtml(g.name_ar)}" data-name-en="${escapeHtml(g.name_en)}"
-                 data-url="${escapeHtml(window.location.origin + window.location.pathname)}#${graveId}">
-              <button class="btn btn--secondary btn--sm" data-share-trigger></button>
-              <div class="share-menu" data-share-menu></div>
-            </div>
-            <button class="btn btn--ghost btn--sm" data-locate="${escapeHtml(g.id)}">${t().viewOnMap}</button>
-          </div>
-        </article>`;
-    })
-    .join("");
+  listEl.innerHTML = `
+    <article class="result-card">
+      <h3>${name || ""}</h3>
+      <div class="result-card__meta">
+        <span>${escapeHtml(GRAVE.birth_date) || "?"} - ${escapeHtml(GRAVE.death_date) || "?"}</span>
+        <span>${lang === "ar" ? "رقم القبر" : "Grave no."} ${escapeHtml(GRAVE.grave_number) || "?"}</span>
+        <span>${escapeHtml(GRAVE.section) || ""}</span>
+      </div>
+      ${address ? `<p class="text-muted">${address}</p>` : ""}
+      ${notes ? `<p>${notes}</p>` : ""}
+      <div class="result-card__actions">
+        <div class="share-widget" data-share
+             data-name-ar="${escapeHtml(GRAVE.name_ar)}" data-name-en="${escapeHtml(GRAVE.name_en)}"
+             data-url="${escapeHtml(window.location.origin + window.location.pathname)}">
+          <button class="btn btn--secondary btn--sm" data-share-trigger></button>
+          <div class="share-menu" data-share-menu></div>
+        </div>
+      </div>
+    </article>`;
 
-  renderMarkers(FILTERED);
-  renderPagination();
   initShareWidgets();
-  initPrayButtons();
-
-  listEl.querySelectorAll("[data-locate]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const record = FILTERED.find((g) => String(g.id) === btn.dataset.locate);
-      if (record && !Number.isNaN(record.latitude)) {
-        MAP.setView([record.latitude, record.longitude], 16);
-      }
-    });
-  });
+  initDirectionsBox();
 }
 
-function renderPagination() {
-  const el = document.getElementById("pagination");
-  const totalPages = Math.max(1, Math.ceil(FILTERED.length / PAGE_SIZE));
-  if (totalPages <= 1) {
-    el.innerHTML = "";
-    return;
-  }
-  let html = "";
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<button aria-current="${i === CURRENT_PAGE}" data-page="${i}">${i}</button>`;
-  }
-  el.innerHTML = html;
-  el.querySelectorAll("[data-page]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      CURRENT_PAGE = parseInt(btn.dataset.page, 10);
-      renderResults();
-      document.getElementById("results-list").scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+/* ---------------------------------------------------------------------- */
+/* Directions box                                                          */
+/* ---------------------------------------------------------------------- */
+
+function buildMapsLinks() {
+  if (!GRAVE || Number.isNaN(GRAVE.latitude) || Number.isNaN(GRAVE.longitude)) return;
+
+  const dest = `${GRAVE.latitude},${GRAVE.longitude}`;
+  const originText = document.getElementById("directions-from").value.trim();
+  const origin = USER_COORDS ? `${USER_COORDS.lat},${USER_COORDS.lng}` : originText;
+
+  const googleLink = document.getElementById("directions-google");
+  const appleLink = document.getElementById("directions-apple");
+
+  const googleParams = new URLSearchParams({
+    api: "1",
+    destination: dest,
+    travelmode: "transit",
   });
+  if (origin) googleParams.set("origin", origin);
+  googleLink.href = `https://www.google.com/maps/dir/?${googleParams.toString()}`;
+
+  const appleParams = new URLSearchParams({ daddr: dest });
+  if (origin) appleParams.set("saddr", origin);
+  appleLink.href = `https://maps.apple.com/?${appleParams.toString()}`;
+
+  // Basic device hint only, both links always stay available since sniffing
+  // is never fully reliable.
+  const isIOS = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && "ontouchend" in document;
+  googleLink.classList.toggle("btn--primary", !isIOS);
+  googleLink.classList.toggle("btn--secondary", isIOS);
+  appleLink.classList.toggle("btn--primary", isIOS);
+  appleLink.classList.toggle("btn--secondary", !isIOS);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadGraves();
-  document.getElementById("search-name").addEventListener("input", applyFilters);
-  document.getElementById("search-date").addEventListener("change", applyFilters);
-  document.getElementById("search-form").addEventListener("submit", (e) => e.preventDefault());
-});
+function initDirectionsBox() {
+  const box = document.getElementById("directions-box");
+  if (!box || !GRAVE || Number.isNaN(GRAVE.latitude)) return;
+  box.hidden = false;
+
+  document.querySelector("[data-i18n-directions-from]").textContent = t().directionsFrom;
+  document.getElementById("directions-google").textContent = t().directionsGetGoogle;
+  document.getElementById("directions-apple").textContent = t().directionsGetApple;
+  document.getElementById("directions-transit-note").textContent = t().directionsTransitNote;
+
+  const useLocationBtn = document.getElementById("directions-use-location");
+  useLocationBtn.textContent = t().directionsUseLocation;
+
+  const fromInput = document.getElementById("directions-from");
+  const statusEl = document.getElementById("directions-status");
+
+  fromInput.addEventListener("input", () => {
+    USER_COORDS = null;
+    buildMapsLinks();
+  });
+
+  useLocationBtn.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      statusEl.textContent = t().directionsLocationError;
+      return;
+    }
+    statusEl.textContent = t().directionsLocating;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        USER_COORDS = { lat: position.coords.latitude, lng: position.coords.longitude };
+        fromInput.value = "";
+        statusEl.textContent = "";
+        buildMapsLinks();
+      },
+      () => {
+        statusEl.textContent = t().directionsLocationError;
+      },
+      { timeout: 10000 }
+    );
+  });
+
+  buildMapsLinks();
+}
+
+document.addEventListener("DOMContentLoaded", loadGrave);
 
 document.addEventListener("langchange", () => {
-  if (ALL_GRAVES.length) renderResults();
+  if (GRAVE) {
+    renderGrave();
+  }
 });

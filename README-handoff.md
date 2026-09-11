@@ -213,3 +213,96 @@ Once you have DGA Figma access, the real logo, real bio/article copy, and
 the real grave list: send screenshots of the actual site (as you mentioned
 you will) and we'll diff this against them and correct anything that's off,
 starting with `tokens.css`.
+
+## Round 3 changes (restructure: pray page, no more search, Vercel-specific fixes)
+
+**Security incident**: live Upstash/Redis credentials were pasted into chat
+during this round. If that's your production database, rotate those
+credentials from the Upstash dashboard (linked from Vercel's Storage tab)
+before relying on them. Nothing in this codebase reuses the actual values
+that were shared.
+
+**Corrected environment variable names.** Vercel's Upstash Marketplace
+integration names its variables `KV_REST_API_URL` / `KV_REST_API_TOKEN` (it
+also provides `REDIS_URL`, unused here). The endpoint now checks for those
+names first, falling back to `UPSTASH_REDIS_REST_URL` /
+`UPSTASH_REDIS_REST_TOKEN` if you ever set it up manually instead of through
+the Marketplace. This is almost certainly why the connection seemed like it
+wasn't working, the Vercel side was fine, the code was checking the wrong
+variable names.
+
+**`/api/testimonies.js` is now `/api/prayers.js`.** Same design (rate
+limiting, duplicate guard, admin-token delete), extended with an optional
+`verse` field. The GET response's array length is now the real, shared
+prayer count across all visitors, since it's backed by Redis there's no
+reason to fake a local-only counter anymore.
+
+**`testimonies.html` is now `pray.html`**, and it does more: pick a curated
+verse (or Random), the verse opens on quran.com in a new tab to read or
+listen, then optionally add a name and a short word, submit. There's also a
+"Go to the donation page" link and a live feed of everyone's prayers.
+**Delete `testimonies.html` and `assets/js/testimonies.js`** if you're
+merging these files into an existing checkout rather than replacing the
+whole folder, they're gone from this version.
+
+**Quran audio: I checked, and changed the plan.** The approach I'd have
+used from memory (a public, unauthenticated Quran.com API call) no longer
+works, that API now requires backend OAuth credentials (client ID/secret)
+registered with the Quran Foundation. Rather than guess at an endpoint I
+couldn't verify and risk it silently failing on a grieving family's page,
+verse selection deep-links to the exact verse on quran.com instead, which
+has its own reliable player. True inline audio is a reasonable phase-2 if
+you register for their API credentials (see api-docs.quran.com) and want to
+add a small server-side proxy, similar in shape to `/api/prayers.js`.
+
+**The curated verse list (`assets/data/verses.js`) needs review.** It's
+sourced from commonly-cited verses/duas for the deceased (Surah Al-Fatiha,
+Ayat al-Kursi, Surah Yaseen, Surah Al-Ikhlas, and two duas from Quran.com's
+own "Duas for the Dead" page), not something I should finalize unilaterally.
+Practice varies by school of thought, please have someone with religious
+authority review this list before it's live.
+
+**Home page**: the vision/mission/values cards are gone (agreed, they read
+as corporate boilerplate on a memorial site). That space now shows a
+horizontally scrolling feed of real prayers (verse chosen + message, pulled
+live from `/api/prayers`). The hero leads with "Pray for him" as the
+primary action instead of requiring a scroll to find it, and now includes
+his portrait (see the placeholder-image note below).
+
+**Grave locator**: search-by-name-and-date and pagination are gone, this is
+a single-person site, they never made sense here. In their place: a
+directions module. Visitors can type a starting point or tap "use my
+location" (only on click, never automatically), then get real Google Maps
+(transit mode) and Apple Maps deep links to the grave's coordinates. This
+does not attempt to reproduce live metro/bus schedules ourselves, Google
+Maps already has real transit data for supported cities, so the deep link
+asks it to do that work. A small note also points to the official Darb app
+for exact, current Riyadh metro/bus times, since transit coverage and
+accuracy varies by city and by data source.
+
+**Footer copyright year** is now set by JavaScript
+(`assets/js/common.js`, any element with `data-current-year`) instead of a
+`[year]` bracket placeholder that would've gone stale every January.
+
+**Placeholder portrait**: `assets/img/placeholder-portrait.svg` is an
+abstract vector illustration, not a photograph. I didn't pull a stock photo
+because I can't verify licensing on images from a search, and a "blurred
+face, trimmed background" stock photo still carries someone's actual
+likeness and a license I can't confirm. The SVG sidesteps both problems
+entirely and is trivially easy to swap for the real photo later, just
+replace that file (or point the `<img>` tag in `index.html`'s hero at a new
+file) once you have one you're happy with.
+
+### Files changed this round
+
+New: `api/prayers.js`, `pray.html`, `assets/js/pray.js` (rewritten, was the
+old device-local pray button logic, now the full pray-page logic),
+`assets/data/verses.js`, `assets/img/placeholder-portrait.svg`.
+
+Deleted: `api/testimonies.js`, `testimonies.html`, `assets/js/testimonies.js`.
+
+Modified: `index.html`, `grave-locator.html`, `assets/js/grave-locator.js`,
+`assets/js/i18n.js`, `assets/js/common.js`, `assets/js/admin.js`,
+`admin.html`, `assets/css/main.css`, and the nav link plus footer year on
+`knowledge-hub.html`, `article-dua.html`, `article-visiting.html`,
+`donate.html`, `privacy.html`.

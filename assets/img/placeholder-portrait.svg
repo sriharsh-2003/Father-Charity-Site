@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="portraitTitle">
+  <title id="portraitTitle">Placeholder portrait</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14523f"/>
+      <stop offset="100%" stop-color="#0d3b2e"/>
+    </linearGradient>
+    <clipPath id="circleClip">
+      <circle cx="200" cy="200" r="190"/>
+    </clipPath>
+  </defs>
+
+  <circle cx="200" cy="200" r="196" fill="none" stroke="#a17a34" stroke-width="2" stroke-dasharray="2 6"/>
+
+  <g clip-path="url(#circleClip)">
+    <rect x="0" y="0" width="400" height="400" fill="url(#bgGrad)"/>
+    <circle cx="200" cy="170" r="72" fill="#f3ead4" opacity="0.9"/>
+    <path d="M 70 400 C 70 280 120 235 200 235 C 280 235 330 280 330 400 Z" fill="#f3ead4" opacity="0.9"/>
+  </g>
+
+  <circle cx="200" cy="200" r="190" fill="none" stroke="#faf8f3" stroke-width="6"/>
+</svg>
