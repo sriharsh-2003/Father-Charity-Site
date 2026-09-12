@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" data-title-ar="تبرع" data-title-en="Donate">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<title>تبرع</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
@@ -83,20 +86,46 @@
   </div>
 </section>
 
+<section class="section--tight">
+  <div class="container" style="max-width: 560px; margin-inline:auto;">
+    <form id="donation-form" class="donation-form glass reveal">
+      <h2 style="margin-top:0;"><span class="i18n-ar">تبرع الآن</span><span class="i18n-en">Give now</span></h2>
+
+      <div class="field">
+        <label><span class="i18n-ar">المبلغ</span><span class="i18n-en">Amount</span></label>
+        <div class="donation-form__amounts" data-amount-presets></div>
+        <input type="number" id="donation-amount-custom" min="1" step="1" inputmode="numeric"
+               data-i18n-placeholder-ar="مبلغ آخر" data-i18n-placeholder-en="Other amount"
+               style="margin-top: var(--space-2);">
+      </div>
+
+      <div class="field">
+        <label for="donation-name"><span class="i18n-ar">الاسم (اختياري)</span><span class="i18n-en">Name (optional)</span></label>
+        <input type="text" id="donation-name" maxlength="80" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label for="donation-email"><span class="i18n-ar">البريد الإلكتروني (لإرسال إيصال التبرع)</span><span class="i18n-en">Email (to send your donation receipt)</span></label>
+        <input type="email" id="donation-email" maxlength="120" autocomplete="email">
+      </div>
+
+      <button class="btn btn--primary" type="submit" id="donation-submit" style="width:100%;">
+        <span class="i18n-ar">متابعة للدفع</span><span class="i18n-en">Continue to payment</span>
+      </button>
+      <p class="text-muted" id="donation-form-status" role="status" aria-live="polite" style="margin:0; text-align:center;"></p>
+    </form>
+  </div>
+</section>
+
 <section class="section section--tight">
   <div class="container prose text-center reveal" style="margin-inline:auto;">
-    <h2><span class="i18n-ar">التبرع الإلكتروني قريبًا</span><span class="i18n-en">Online giving, coming soon</span></h2>
-    <p class="text-muted">
-      <span class="i18n-ar">التبرع الإلكتروني المباشر غير متاح بعد. نعمل حاليًا على استيفاء التراخيص والتصاريح اللازمة والربط مع بوابة دفع معتمدة قبل تفعيل هذه الخدمة. الرقم أعلاه يعكس المبلغ المجموع حتى الآن عبر التحويلات المباشرة، ويُحدَّث يدويًا.</span>
-      <span class="i18n-en">Direct online donations aren't available yet. We're working on the required licensing, permits, and an approved payment gateway before this service goes live. The figure above reflects funds raised so far through direct transfers, and is updated by hand in the meantime.</span>
-    </p>
     <div class="notice notice--info prose" style="text-align: start; margin-inline:auto;">
       <p style="margin:0;">
-        <span class="i18n-ar"><strong>للتبرع الآن عبر تحويل بنكي:</strong> [تفاصيل الحساب البنكي قابلة للتعديل] — يُرجى التواصل معنا لتأكيد التحويل وإضافته إلى المبلغ المجموع.</span>
-        <span class="i18n-en"><strong>To give now by bank transfer:</strong> [Editable bank account details] — please get in touch to confirm your transfer so it can be added to the total above.</span>
+        <span class="i18n-ar"><strong>للتبرع الآن عبر تحويل بنكي:</strong> [تفاصيل الحساب البنكي قابلة للتعديل]. يُرجى التواصل معنا لتأكيد التحويل وإضافته إلى المبلغ المجموع.</span>
+        <span class="i18n-en"><strong>To give now by bank transfer:</strong> [Editable bank account details]. Please get in touch to confirm your transfer so it can be added to the total above.</span>
       </p>
     </div>
-    <a class="btn btn--primary" href="knowledge-hub.html" style="margin-top: var(--space-4);">
+    <a class="btn btn--secondary" href="knowledge-hub.html" style="margin-top: var(--space-4);">
       <span class="i18n-ar">تصفّح منصة المعرفة بدلًا من ذلك</span>
       <span class="i18n-en">Browse the knowledge hub instead</span>
     </a>
@@ -117,15 +146,18 @@
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
     </div>
-    <div class="footer-partners">
-      <p class="footer-partners__label">
-        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
-      </p>
-      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
-      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
-    </div>
     <div class="footer-bottom">
-      <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
+      <span>
+        <span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span>
+        <svg class="footer-ornament" aria-hidden="true" width="14" height="14" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="32" r="22" fill="currentColor"/>
+          <circle cx="40" cy="26" r="19" fill="var(--color-primary-900)"/>
+        </svg>
+      </span>
+      <div class="footer-partners-inline" aria-label="Supported by AWQAF and the National Center for Non-Profit Sector">
+        <span class="footer-partners-inline__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF" loading="lazy"></span>
+        <span class="footer-partners-inline__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector" loading="lazy"></span>
+      </div>
     </div>
   </div>
 </footer>

@@ -1,7 +1,8 @@
 /*
-  Renders the donation progress bar + counter from assets/data/donation.js.
-  Pure front-end display, no payment processing (see the comment at the top
-  of donation.js for why).
+  Renders the donation progress bar + counter from assets/data/donation.js,
+  and drives the donation form below it (amount selection, validation, and
+  a submit handler ready to POST to a real gateway the moment the client
+  provides one -- see the apiEndpoint comment in donation.js).
 */
 document.addEventListener("DOMContentLoaded", () => {
   const wrap = document.querySelector("[data-donation-progress]");
@@ -74,3 +75,124 @@ function countUp(from, to, durationMs, onTick) {
   }
   requestAnimationFrame(step);
 }
+
+/* ---------------------------------------------------------------------- */
+/* Donation form                                                          */
+/* ---------------------------------------------------------------------- */
+
+let SELECTED_AMOUNT = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("donation-form");
+  if (!form || typeof DONATION_CAMPAIGN === "undefined") return;
+
+  const presetsWrap = form.querySelector("[data-amount-presets]");
+  const customInput = document.getElementById("donation-amount-custom");
+  const statusEl = document.getElementById("donation-form-status");
+
+  const { presetAmounts, currencySymbolAr, currencySymbolEn } = DONATION_CAMPAIGN;
+
+  function buildPresetButtons() {
+    presetsWrap.innerHTML = "";
+    (presetAmounts || []).forEach((amount) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "donation-form__amount-btn";
+      btn.dataset.amount = String(amount);
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = formatAmountLabel(amount);
+      btn.addEventListener("click", () => selectPreset(amount, btn));
+      presetsWrap.appendChild(btn);
+    });
+  }
+
+  function formatAmountLabel(amount) {
+    const symbol = currentLang() === "ar" ? currencySymbolAr : currencySymbolEn;
+    const num = formatNumber(amount);
+    return currentLang() === "ar" ? `${num} ${symbol}` : `${symbol} ${num}`;
+  }
+
+  function selectPreset(amount, btn) {
+    SELECTED_AMOUNT = amount;
+    customInput.value = "";
+    presetsWrap.querySelectorAll(".donation-form__amount-btn").forEach((b) => {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+  }
+
+  customInput.addEventListener("input", () => {
+    SELECTED_AMOUNT = null;
+    presetsWrap.querySelectorAll(".donation-form__amount-btn").forEach((b) => {
+      b.setAttribute("aria-pressed", "false");
+    });
+  });
+
+  function applyPlaceholder() {
+    const attr = currentLang() === "ar" ? "data-i18n-placeholder-ar" : "data-i18n-placeholder-en";
+    customInput.placeholder = customInput.getAttribute(attr) || "";
+  }
+
+  buildPresetButtons();
+  applyPlaceholder();
+
+  document.addEventListener("langchange", () => {
+    buildPresetButtons();
+    applyPlaceholder();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const customValue = parseFloat(customInput.value);
+    const amount = SELECTED_AMOUNT || (Number.isFinite(customValue) && customValue > 0 ? customValue : null);
+
+    if (!amount) {
+      statusEl.textContent = t().donationInvalidAmount;
+      return;
+    }
+
+    const payload = {
+      amount,
+      currency: DONATION_CAMPAIGN.currency,
+      name: document.getElementById("donation-name").value.trim(),
+      email: document.getElementById("donation-email").value.trim(),
+    };
+
+    if (!DONATION_CAMPAIGN.apiEndpoint) {
+      // No gateway wired up yet (see the apiEndpoint comment in
+      // donation.js). The form itself, validation included, is fully
+      // live -- this is the one line that changes once the client's API
+      // is in place: swap this block for the fetch() below.
+      statusEl.textContent = t().donationPendingGateway;
+      return;
+    }
+
+    statusEl.textContent = t().donationSubmitting;
+    const submitBtn = document.getElementById("donation-submit");
+    submitBtn.disabled = true;
+
+    fetch(DONATION_CAMPAIGN.apiEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error("Gateway request failed");
+        return response.json();
+      })
+      .then((data) => {
+        // Expected shape once a real gateway is connected: a redirect URL
+        // to the hosted payment page. Adjust this to match whatever the
+        // client's gateway actually returns.
+        if (data && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        }
+      })
+      .catch(() => {
+        statusEl.textContent = t().donationGatewayError;
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+      });
+  });
+});

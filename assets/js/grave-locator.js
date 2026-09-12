@@ -58,13 +58,23 @@ function initMap() {
   }).addTo(MAP);
 
   if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-    const lang = currentLang();
-    const name = lang === "ar" ? GRAVE.name_ar : GRAVE.name_en;
-    MARKER = L.marker([lat, lng])
-      .addTo(MAP)
-      .bindPopup(`<strong>${escapeHtml(name)}</strong>`)
-      .openPopup();
+    MARKER = L.marker([lat, lng]).addTo(MAP);
+    updateMarkerPopup();
+    MARKER.openPopup();
   }
+}
+
+// Keeps the map pin's popup name in the visitor's current language. Split
+// out from initMap() (which only ever runs once) so switching languages
+// after the map has already loaded still shows the right name, instead of
+// leaving whatever language was active on first load.
+function updateMarkerPopup() {
+  if (!MARKER || !GRAVE) return;
+  const lang = currentLang();
+  const name = lang === "ar" ? GRAVE.name_ar : GRAVE.name_en;
+  const wasOpen = MARKER.isPopupOpen();
+  MARKER.bindPopup(`<strong>${escapeHtml(name)}</strong>`);
+  if (wasOpen) MARKER.openPopup();
 }
 
 function renderGrave() {
@@ -139,6 +149,16 @@ function buildMapsLinks() {
   appleLink.classList.toggle("btn--secondary", !isIOS);
 }
 
+let DIRECTIONS_LISTENERS_BOUND = false;
+
+// The directions box is static markup on the page (only #results-list gets
+// re-rendered on language change), so its event listeners only ever need
+// binding once. Re-running renderGrave() on every langchange used to call
+// this whole function again, which kept re-adding listeners to the same
+// buttons/input -- clicking "use my location" after a language switch or
+// two would fire the geolocation prompt multiple times over. Text labels
+// still need refreshing on every call (that part IS language-dependent),
+// so the two are split below.
 function initDirectionsBox() {
   const box = document.getElementById("directions-box");
   if (!box || !GRAVE || Number.isNaN(GRAVE.latitude)) return;
@@ -148,17 +168,62 @@ function initDirectionsBox() {
   document.getElementById("directions-google").textContent = t().directionsGetGoogle;
   document.getElementById("directions-apple").textContent = t().directionsGetApple;
   document.getElementById("directions-transit-note").textContent = t().directionsTransitNote;
+  document.getElementById("directions-use-location").textContent = t().directionsUseLocation;
 
-  const useLocationBtn = document.getElementById("directions-use-location");
-  useLocationBtn.textContent = t().directionsUseLocation;
+  const searchBtn = document.getElementById("directions-search");
+  if (searchBtn) {
+    searchBtn.textContent = t().directionsSearch;
+    searchBtn.setAttribute("aria-label", t().directionsSearch);
+  }
 
+  if (!DIRECTIONS_LISTENERS_BOUND) {
+    bindDirectionsListeners();
+    DIRECTIONS_LISTENERS_BOUND = true;
+  }
+
+  buildMapsLinks();
+}
+
+function bindDirectionsListeners() {
   const fromInput = document.getElementById("directions-from");
   const statusEl = document.getElementById("directions-status");
+  const searchBtn = document.getElementById("directions-search");
+  const useLocationBtn = document.getElementById("directions-use-location");
+  const box = document.getElementById("directions-box");
+
+  // The links below already update live as you type (kept, it's harmless),
+  // but a visitor typing an address expects something to press, not a
+  // field that quietly does its thing in the background. This button (and
+  // Enter) gives that explicit action, plus a moment of visible
+  // confirmation so it's clear something happened.
+  function confirmTypedOrigin() {
+    USER_COORDS = null;
+    buildMapsLinks();
+    statusEl.textContent = "";
+    if (box) {
+      box.classList.remove("directions-box--confirmed");
+      // Force reflow so the class can be re-added to restart the animation
+      // if the visitor clicks search more than once in a row.
+      void box.offsetWidth;
+      box.classList.add("directions-box--confirmed");
+    }
+  }
 
   fromInput.addEventListener("input", () => {
     USER_COORDS = null;
     buildMapsLinks();
   });
+
+  fromInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      confirmTypedOrigin();
+    }
+  });
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", confirmTypedOrigin);
+  }
 
   useLocationBtn.addEventListener("click", () => {
     if (!navigator.geolocation) {
@@ -179,8 +244,6 @@ function initDirectionsBox() {
       { timeout: 10000 }
     );
   });
-
-  buildMapsLinks();
 }
 
 document.addEventListener("DOMContentLoaded", loadGrave);
@@ -188,5 +251,6 @@ document.addEventListener("DOMContentLoaded", loadGrave);
 document.addEventListener("langchange", () => {
   if (GRAVE) {
     renderGrave();
+    updateMarkerPopup();
   }
 });

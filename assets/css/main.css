@@ -340,6 +340,8 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 .field input[type="text"],
 .field input[type="date"],
 .field input[type="search"],
+.field input[type="number"],
+.field input[type="email"],
 .field select {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-s);
@@ -477,62 +479,89 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 .notice--info { background: #e8f1f7; border-color: #bcd7e6; }
 
 /* =========================================================================
-   DIGITAL STAMP (placeholder, real stamp is issued by DGA on certification)
-   ========================================================================= */
-.digital-stamp {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  border: 1px dashed var(--color-accent-600);
-  border-radius: var(--radius-s);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-caption);
-  color: var(--color-accent-600);
-}
-
-/* =========================================================================
    FOOTER
    ========================================================================= */
 .site-footer {
+  position: relative;
   background: var(--color-primary-900);
   color: rgba(250, 248, 243, 0.85);
   padding-block: var(--space-7);
   margin-top: var(--space-9);
+  overflow: hidden;
 }
 .site-footer a { color: #fff; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
-.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-6); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,0.15); margin-top: var(--space-6); padding-top: var(--space-4); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); font-size: var(--font-size-caption); }
-
-/* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
-   Sector). Backgrounds already removed from the source images; each logo
-   still sits on its own light chip here because the logos' own colors
-   (green, teal) would lose contrast directly on the dark footer green. */
-.footer-partners {
+.footer-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-6); }
+.footer-bottom {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
   display: flex;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-5);
-  padding-top: var(--space-6);
-  margin-top: var(--space-6);
-  border-top: 1px solid rgba(255,255,255,0.15);
-}
-.footer-partners__label {
+  gap: var(--space-4);
   font-size: var(--font-size-caption);
-  color: rgba(250, 248, 243, 0.7);
-  margin: 0;
-  flex: 1 1 100%;
 }
-.footer-partners__chip {
-  background: #fff;
-  border-radius: var(--radius-m);
-  padding: var(--space-2) var(--space-4);
+
+/* Faint architectural watermark, reusing the same silhouette as the page
+   heroes so the footer picks up the same visual language instead of
+   sitting there as a flat block of color. Kept very low-opacity and
+   pinned to one corner precisely so it reads as texture, not another
+   design element competing for attention. */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: -40px;
+  bottom: -20px;
+  width: 260px;
+  height: 160px;
+  background-image: url("../img/religious-silhouette.svg");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: contain;
+  opacity: 0.08;
+  pointer-events: none;
+}
+html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scaleX(-1); }
+
+/* Small crescent ornament, gently floating, tucked beside the brand name.
+   Same animation as the hero portrait (gentle-float) so the motion
+   language is consistent site-wide, just one small element, not a repeat
+   of the logos or backdrop. */
+.footer-ornament {
+  display: inline-block;
+  vertical-align: -2px;
+  margin-inline-start: var(--space-2);
+  color: var(--color-accent-600);
+  animation: gentle-float 7s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+/* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
+   Sector). Shown inline in the footer's bottom row rather than as their
+   own separate labeled section: a small soft chip (not stark white, a
+   warm off-white that echoes --color-surface) gives the dark logo marks
+   enough contrast to read, without a jarring rectangle. */
+.footer-partners-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.footer-partners-inline__chip {
+  background: rgba(250, 248, 243, 0.92);
+  border-radius: var(--radius-s);
+  padding: var(--space-1) var(--space-2);
   display: inline-flex;
   align-items: center;
+  line-height: 0;
 }
-.footer-partners__chip img { height: 40px; width: auto; display: block; }
+.footer-partners-inline__chip img { height: 22px; width: auto; display: block; }
 @media (max-width: 600px) {
-  .footer-partners__chip img { height: 32px; }
+  .footer-bottom { justify-content: center; text-align: center; }
+  .footer-partners-inline__chip img { height: 18px; }
 }
 
 /* =========================================================================
@@ -634,6 +663,23 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 }
 .directions-box__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
+/* Typed starting-point field + its explicit search/confirm button, so
+   there's a clear action to press after typing (not just "use my
+   location"), instead of relying on the field silently updating the
+   links below as you type. */
+.directions-box__input-row { display: flex; gap: var(--space-2); }
+.directions-box__input-row input { flex: 1 1 auto; min-width: 0; }
+.directions-box__input-row .btn { flex: 0 0 auto; }
+
+/* Brief highlight after pressing search / Enter, so pressing it visibly
+   does something even though the destination links were already updating
+   live in the background. */
+.directions-box--confirmed { animation: directions-confirm-flash 900ms ease; }
+@keyframes directions-confirm-flash {
+  0% { box-shadow: 0 0 0 0 rgba(161, 122, 52, 0.5); }
+  100% { box-shadow: 0 0 0 10px rgba(161, 122, 52, 0); }
+}
+
 /* =========================================================================
    FLOAT-UP REVEAL ANIMATION (assets/js/reveal.js)
    Applied across pages for a consistent, understated motion language.
@@ -694,6 +740,41 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 }
 .donation-progress__pct { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); }
 .donation-progress__meta { display: flex; justify-content: space-between; font-size: var(--font-size-body-s); color: var(--color-ink-600); }
+
+/* =========================================================================
+   DONATION FORM (donate.html, driven by assets/data/donation.js + donate.js)
+   The form itself is fully live: preset/custom amount, validation, all of
+   it. Only the actual payment step is pending, since that needs the
+   client's gateway credentials -- see the apiEndpoint comment in
+   assets/data/donation.js for exactly what changes once that arrives.
+   ========================================================================= */
+.donation-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-m);
+}
+.donation-form__amounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: var(--space-2);
+}
+.donation-form__amount-btn {
+  padding: var(--space-3) var(--space-2);
+  border-radius: var(--radius-s);
+  border: 1px solid var(--color-border);
+  background: var(--glass-bg-strong);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: border-color var(--motion-fast), background var(--motion-fast);
+}
+.donation-form__amount-btn:hover { border-color: var(--color-primary-500); }
+.donation-form__amount-btn[aria-pressed="true"] {
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-100);
+  color: var(--color-primary-900);
+}
 
 /* =========================================================================
    UTILITIES

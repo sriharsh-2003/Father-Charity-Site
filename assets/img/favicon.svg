@@ -1,0 +1,17 @@
+<!--
+  Site favicon. A simple circular emblem in the site's own palette
+  (deep majlis green + muted gold, see tokens.css) rather than a stock
+  icon: a crescent and a small dome/finial, echoing the minaret shapes
+  in religious-silhouette.svg. The crescent is drawn as a gold circle
+  with a green circle overlapping it (same green as the background),
+  which reads as a cut-out crescent without relying on fill-rule
+  tricks. Works as a modern SVG favicon; rasterized PNG fallbacks
+  (favicon-32.png, favicon-180.png, favicon-192.png) sit next to this
+  file for browsers that don't support SVG icons.
+-->
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="32" cy="32" r="32" fill="#0d3b2e"/>
+  <circle cx="30" cy="32" r="15" fill="#f3ead4"/>
+  <circle cx="36" cy="28" r="13" fill="#0d3b2e"/>
+  <circle cx="46" cy="16" r="3.4" fill="#a17a34"/>
+</svg>

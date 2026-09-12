@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" data-title-ar="الرئيسية | وقف عبدالله العجلان" data-title-en="Home | Abdullah Alajlan Endowment">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><span class="i18n-ar">الرئيسية | وقف عبدالله العجلان</span><span class="i18n-en">Home | Abdullah Alajlan Endowment</span></title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/favicon-180.png">
+<title>الرئيسية | وقف عبدالله العجلان</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -366,29 +369,28 @@ p { margin: 0 0 var(--space-4); }
   from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.footer-partners {
+.footer-partners-inline {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  padding-top: var(--space-6);
-  margin-top: var(--space-6);
-  border-top: 1px solid rgba(255,255,255,0.15);
+  gap: var(--space-3);
 }
-.footer-partners__label {
-  font-size: var(--font-size-caption);
-  color: rgba(250, 248, 243, 0.7);
-  margin: 0;
-  flex: 1 1 100%;
-}
-.footer-partners__chip {
-  background: #fff;
-  border-radius: var(--radius-m);
-  padding: var(--space-2) var(--space-4);
+.footer-partners-inline__chip {
+  background: rgba(250, 248, 243, 0.92);
+  border-radius: var(--radius-s);
+  padding: var(--space-1) var(--space-2);
   display: inline-flex;
   align-items: center;
+  line-height: 0;
 }
-.footer-partners__chip img { height: 40px; width: auto; display: block; }
+.footer-partners-inline__chip img { height: 22px; width: auto; display: block; }
+.footer-ornament {
+  display: inline-block;
+  vertical-align: -2px;
+  margin-inline-start: var(--space-2);
+  color: var(--color-accent-600);
+  animation: gentle-float 7s ease-in-out infinite;
+  opacity: 0.9;
+}
 .hero__text { flex: 1 1 auto; min-width: 0; }
 @media (max-width: 760px) {
   .hero__layout { flex-direction: column; text-align: center; }
@@ -572,20 +574,6 @@ p { margin: 0 0 var(--space-4); }
   font-size: var(--font-size-body-s);
 }
 .notice--info { background: #e8f1f7; border-color: #bcd7e6; }
-
-/* =========================================================================
-   DIGITAL STAMP (placeholder, real stamp is issued by DGA on certification)
-   ========================================================================= */
-.digital-stamp {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  border: 1px dashed var(--color-accent-600);
-  border-radius: var(--radius-s);
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-caption);
-  color: var(--color-accent-600);
-}
 
 /* =========================================================================
    FOOTER
@@ -824,22 +812,19 @@ p { margin: 0 0 var(--space-4); }
         <p><a href="knowledge-hub.html"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></a></p>
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
-      <div>
-        <span class="digital-stamp">
-          <span class="i18n-ar">شعار الثقة الرقمي (بانتظار الاعتماد)</span>
-          <span class="i18n-en">Digital trust stamp (pending certification)</span>
-        </span>
-      </div>
-    </div>
-    <div class="footer-partners">
-      <p class="footer-partners__label">
-        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
-      </p>
-      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
-      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
     </div>
     <div class="footer-bottom">
-      <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
+      <span>
+        <span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span>
+        <svg class="footer-ornament" aria-hidden="true" width="14" height="14" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="32" r="22" fill="currentColor"/>
+          <circle cx="40" cy="26" r="19" fill="var(--color-primary-900)"/>
+        </svg>
+      </span>
+      <div class="footer-partners-inline" aria-label="Supported by AWQAF and the National Center for Non-Profit Sector">
+        <span class="footer-partners-inline__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF" loading="lazy"></span>
+        <span class="footer-partners-inline__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector" loading="lazy"></span>
+      </div>
     </div>
   </div>
 </footer>

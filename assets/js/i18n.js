@@ -33,12 +33,17 @@ const UI_STRINGS = {
     testimonyEmpty: "كن أول من يدعو له.",
     testimonyCount: (n) => `${n} دعوة`,
     directionsFrom: "من أين ستبدأ؟",
+    directionsSearch: "بحث",
     directionsUseLocation: "استخدام موقعي الحالي",
     directionsLocating: "جارٍ تحديد الموقع...",
     directionsLocationError: "تعذّر تحديد الموقع. أدخل نقطة البداية يدويًا.",
     directionsGetGoogle: "المسار عبر خرائط جوجل",
     directionsGetApple: "المسار عبر خرائط آبل",
     directionsTransitNote: "لأوقات المترو والحافلات الدقيقة والحالية، يُنصح أيضًا بمراجعة تطبيق درب الرسمي.",
+    donationInvalidAmount: "الرجاء اختيار مبلغ أو إدخال مبلغ صحيح.",
+    donationSubmitting: "جارٍ التحضير للدفع...",
+    donationPendingGateway: "بوابة الدفع الإلكتروني لم تُفعَّل بعد من قِبل الجهة المعنية. بياناتك أدناه جاهزة، وسنُتابع معك بمجرد تفعيلها، أو يمكنك التبرع الآن عبر التحويل البنكي بالأسفل.",
+    donationGatewayError: "تعذّر الاتصال ببوابة الدفع. حاول مرة أخرى، أو تبرع عبر التحويل البنكي بالأسفل.",
   },
   en: {
     shareTitle: "Share",
@@ -64,12 +69,17 @@ const UI_STRINGS = {
     testimonyEmpty: "Be the first to pray for him.",
     testimonyCount: (n) => `${n} prayers`,
     directionsFrom: "Where are you starting from?",
+    directionsSearch: "Search",
     directionsUseLocation: "Use my current location",
     directionsLocating: "Finding your location...",
     directionsLocationError: "Could not find your location. Enter a starting point manually.",
     directionsGetGoogle: "Directions via Google Maps",
     directionsGetApple: "Directions via Apple Maps",
     directionsTransitNote: "For exact, current metro and bus times, it's also worth checking the official Darb app.",
+    donationInvalidAmount: "Please choose an amount or enter a valid one.",
+    donationSubmitting: "Preparing payment...",
+    donationPendingGateway: "Online payment hasn't been switched on yet. Your details below are ready to go, we'll follow up as soon as it is, or you can give now by bank transfer below.",
+    donationGatewayError: "Could not reach the payment gateway. Please try again, or give by bank transfer below.",
   },
 };
 
@@ -88,6 +98,16 @@ function applyLang(lang) {
   const toggle = document.querySelector("[data-lang-toggle]");
   if (toggle) {
     toggle.textContent = lang === "ar" ? "English" : "العربية";
+  }
+  // The browser tab title can't contain markup (a <title> only ever shows
+  // as plain text, so the old <span class="i18n-ar">...</span> markup used
+  // everywhere else in the page was showing up literally in the tab). Each
+  // page instead sets data-title-ar / data-title-en on <html>, and this is
+  // the one place that turns that into the real document.title.
+  const titleAr = document.documentElement.getAttribute("data-title-ar");
+  const titleEn = document.documentElement.getAttribute("data-title-en");
+  if (titleAr && titleEn) {
+    document.title = lang === "ar" ? titleAr : titleEn;
   }
   document.dispatchEvent(new CustomEvent("langchange", { detail: { lang } }));
 }

@@ -21,4 +21,15 @@ const DONATION_CAMPAIGN = {
   currency: "SAR",
   currencySymbolAr: "ر.س",
   currencySymbolEn: "SAR",
+
+  // Suggested one-tap amounts on the donation form, in the currency above.
+  presetAmounts: [100, 500, 1000, 5000],
+
+  // Left null until the client's payment gateway is ready. The donation
+  // form (assets/js/donate.js) is fully built and validates input either
+  // way; when this is null it tells the visitor payment isn't connected
+  // yet instead of submitting anywhere. Once the client provides the
+  // gateway's API, set this to that endpoint URL and the form will POST
+  // to it -- nothing else in the page needs to change.
+  apiEndpoint: null,
 };
