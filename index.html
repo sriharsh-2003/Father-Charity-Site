@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/main.css">
+<script src="assets/data/site-config.js"></script>
+<script src="assets/js/site-config-apply.js"></script>
 </head>
 <body>
 
@@ -34,12 +36,15 @@
   </div>
 </header>
 
+<main class="site-main">
+
 <section class="hero">
+  <div class="religious-backdrop" aria-hidden="true"></div>
   <div class="container hero__layout">
     <div class="hero__portrait">
       <img src="assets/img/placeholder-portrait.svg" alt="" width="220" height="220">
     </div>
-    <div class="hero__text">
+    <div class="hero__text reveal">
       <p class="eyebrow" style="color: rgba(250,248,243,0.85);">
         <span class="i18n-ar">في ذكرى</span><span class="i18n-en">In loving memory</span>
       </p>
@@ -79,20 +84,20 @@
 </section>
 
 <section class="section">
-  <div class="container">
+  <div class="container reveal">
     <p class="eyebrow"><span class="i18n-ar">من نحن</span><span class="i18n-en">About</span></p>
     <h2 class="prose">
       <span class="i18n-ar">قصة موجزة</span><span class="i18n-en">A brief story</span>
     </h2>
     <p class="prose">
-      <span class="i18n-ar">[نص قابل للتعديل] وُلد عبدالله العجلان عام [xxxx]، وتوفي في ١٧ صفر ١٤٤٨هـ الموافق ١٠ سبتمبر ٢٠٢٦م، بعد أن أمضى حياته في خدمة أسرته ومجتمعه. أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
-      <span class="i18n-en">[Editable text] Abdullah Alajlan was born in [year], and passed away on 10 September 2026 (17 Safar 1448H), after a life spent in service to his family and community. This platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
+      <span class="i18n-ar">[نص قابل للتعديل] وُلد عبدالله العجلان عام [xxxx]، وتوفي في ٢٨ ذو القعدة ١٤٤٧هـ الموافق ١٥ مايو ٢٠٢٦م، بعد أن أمضى حياته في خدمة أسرته ومجتمعه. أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
+      <span class="i18n-en">[Editable text] Abdullah Alajlan was born in [year], and passed away on 15 May 2026 (28 Dhu al-Qi'dah 1447H), after a life spent in service to his family and community. This platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
     </p>
   </div>
 </section>
 
 <section class="section section--tinted">
-  <div class="container">
+  <div class="container reveal">
     <p class="eyebrow"><span class="i18n-ar">من دعا له</span><span class="i18n-en">Who has prayed for him</span></p>
     <h2><span class="i18n-ar">دعوات من زوار هذه الصفحة</span><span class="i18n-en">Prayers from visitors to this page</span></h2>
     <p class="text-muted" id="prayers-feed-count"></p>
@@ -102,6 +107,8 @@
     </a>
   </div>
 </section>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -122,6 +129,13 @@
           <span class="i18n-en">Digital trust stamp (pending certification)</span>
         </span>
       </div>
+    </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
     </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
@@ -146,5 +160,6 @@
 <script src="assets/js/share.js"></script>
 <script src="assets/js/pray.js"></script>
 <script src="assets/js/visitation-dates.js"></script>
+<script src="assets/js/reveal.js"></script>
 </body>
 </html>

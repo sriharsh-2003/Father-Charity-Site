@@ -122,13 +122,14 @@ function renderPrayersFeed(containerId, prayers) {
         ? escapeHtml(verseEntry ? (lang === "ar" ? verseEntry.label_ar : verseEntry.label_en) : item.verse)
         : "";
       return `
-        <article class="prayer-card">
+        <article class="prayer-card reveal">
           ${verseText ? `<p class="prayer-card__verse">${verseText}</p>` : ""}
           ${message ? `<p class="prayer-card__message">${message}</p>` : ""}
           <p class="prayer-card__name">${name}</p>
         </article>`;
     })
     .join("");
+  if (typeof revealNewElements === "function") revealNewElements(container);
 }
 
 async function loadPrayersFeed(containerId) {

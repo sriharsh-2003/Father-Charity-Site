@@ -104,7 +104,7 @@
    RESET
    ========================================================================= */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html, body { margin: 0; padding: 0; height: 100%; }
 img, svg { max-width: 100%; display: block; }
 a { color: inherit; }
 button { font: inherit; }
@@ -118,7 +118,12 @@ html {
 body {
   font-size: var(--font-size-body-m);
   line-height: var(--line-height-body);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
+.site-main { flex: 1 0 auto; }
+.site-footer { flex-shrink: 0; }
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -338,7 +343,52 @@ p { margin: 0 0 var(--space-4); }
   display: block;
   border: 6px solid var(--glass-border);
   box-shadow: var(--shadow-card);
+  animation: gentle-float 6s ease-in-out infinite;
 }
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.religious-backdrop {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgOTAwIDUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1heCBzbGljZSI+CiAgPGcgZmlsbD0iIzBkM2IyZSI+CiAgICA8IS0tIGdyb3VuZCBsaW5lIC0tPgogICAgPHJlY3QgeD0iMCIgeT0iMzYwIiB3aWR0aD0iOTAwIiBoZWlnaHQ9IjE0MCIvPgoKICAgIDwhLS0gbGVmdCBtaW5hcmV0IC0tPgogICAgPHJlY3QgeD0iNjAiIHk9IjIwMCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjE2MCIvPgogICAgPHJlY3QgeD0iNTAiIHk9IjE4NSIgd2lkdGg9IjQ2IiBoZWlnaHQ9IjE4IiByeD0iMiIvPgogICAgPHBhdGggZD0iTSA3MyAxODUgTCA2MCAxNTAgTCA4NiAxNTAgWiIvPgogICAgPGNpcmNsZSBjeD0iNzMiIGN5PSIxNDAiIHI9IjYiLz4KICAgIDxwYXRoIGQ9Ik0gNjYgMTMyIHEgNyAtMTQgMTQgMCBxIC03IDYgLTE0IDAgWiIvPgoKICAgIDwhLS0gc2lkZSBsb3cgZG9tZSBidWlsZGluZyAtLT4KICAgIDxyZWN0IHg9IjEyMCIgeT0iMzAwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjYwIi8+CiAgICA8cGF0aCBkPSJNIDEyMCAzMDAgUSAxODAgMjQwIDI0MCAzMDAgWiIvPgogICAgPGNpcmNsZSBjeD0iMTgwIiBjeT0iMjMyIiByPSI3Ii8+CgogICAgPCEtLSBjZW50cmFsIG1haW4gZG9tZSArIHN0cnVjdHVyZSAtLT4KICAgIDxyZWN0IHg9IjMwMCIgeT0iMjYwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjEwMCIvPgogICAgPHBhdGggZD0iTSAzMDAgMjYwIFEgMzkwIDEzMCA0ODAgMjYwIFoiLz4KICAgIDxyZWN0IHg9IjM4MiIgeT0iMTEyIiB3aWR0aD0iMTYiIGhlaWdodD0iMzQiLz4KICAgIDxjaXJjbGUgY3g9IjM5MCIgY3k9IjEwNCIgcj0iOSIvPgogICAgPHBhdGggZD0iTSAzODAgOTYgcSAxMCAtMTggMjAgMCBxIC0xMCA4IC0yMCAwIFoiLz4KCiAgICA8IS0tIGVudHJhbmNlIGFyY2ggLS0+CiAgICA8cGF0aCBkPSJNIDM2MCAzNjAgTCAzNjAgMzIwIFEgMzkwIDI5MiA0MjAgMzIwIEwgNDIwIDM2MCBaIiBmaWxsPSIjZmFmOGYzIiBvcGFjaXR5PSIwLjE4Ii8+CgogICAgPCEtLSByaWdodCBtaW5hcmV0ICh0YWxsZXIsIG1pcnJvcnMgbGVmdCkgLS0+CiAgICA8cmVjdCB4PSI1MjAiIHk9IjE4MCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE4MCIvPgogICAgPHJlY3QgeD0iNTA4IiB5PSIxNjMiIHdpZHRoPSI1MiIgaGVpZ2h0PSIyMCIgcng9IjIiLz4KICAgIDxwYXRoIGQ9Ik0gNTM0IDE2MyBMIDUxOSAxMjIgTCA1NDkgMTIyIFoiLz4KICAgIDxjaXJjbGUgY3g9IjUzNCIgY3k9IjExMCIgcj0iNyIvPgogICAgPHBhdGggZD0iTSA1MjYgMTAxIHEgOCAtMTYgMTYgMCBxIC04IDcgLTE2IDAgWiIvPgoKICAgIDwhLS0gc2Vjb25kYXJ5IHNpZGUgZG9tZSBidWlsZGluZyAtLT4KICAgIDxyZWN0IHg9IjU5MCIgeT0iMjkwIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjcwIi8+CiAgICA8cGF0aCBkPSJNIDU5MCAyOTAgUSA2NjAgMjIwIDczMCAyOTAgWiIvPgogICAgPGNpcmNsZSBjeD0iNjYwIiBjeT0iMjEyIiByPSI4Ii8+CgogICAgPCEtLSBmYXIgcmlnaHQgc21hbGxlciBtaW5hcmV0IC0tPgogICAgPHJlY3QgeD0iNzgwIiB5PSIyMzAiIHdpZHRoPSIyMiIgaGVpZ2h0PSIxMzAiLz4KICAgIDxyZWN0IHg9Ijc3MSIgeT0iMjE3IiB3aWR0aD0iNDAiIGhlaWdodD0iMTYiIHJ4PSIyIi8+CiAgICA8cGF0aCBkPSJNIDc5MSAyMTcgTCA3NzkgMTg0IEwgODAzIDE4NCBaIi8+CiAgICA8Y2lyY2xlIGN4PSI3OTEiIGN5PSIxNzYiIHI9IjUiLz4KCiAgICA8IS0tIGxhdHRpY2Ugd2luZG93IGRvdHMgYWxvbmcgdGhlIGNlbnRyYWwgZmFjYWRlLCBlY2hvZXMgbWFzaHJhYml5YSB3b3JrIC0tPgogICAgPGcgb3BhY2l0eT0iMC4yNSI+CiAgICAgIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjMzMCIgcj0iNCIvPgogICAgICA8Y2lyY2xlIGN4PSIzNTAiIGN5PSIzMzAiIHI9IjQiLz4KICAgICAgPGNpcmNsZSBjeD0iNDMwIiBjeT0iMzMwIiByPSI0Ii8+CiAgICAgIDxjaXJjbGUgY3g9IjQ1MCIgY3k9IjMzMCIgcj0iNCIvPgogICAgPC9nPgogIDwvZz4KPC9zdmc+Cg==");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 1100px 500px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+.reveal-fade-up {
+  animation: fade-up-in 700ms ease both;
+}
+@keyframes fade-up-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.footer-partners {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  padding-top: var(--space-6);
+  margin-top: var(--space-6);
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+.footer-partners__label {
+  font-size: var(--font-size-caption);
+  color: rgba(250, 248, 243, 0.7);
+  margin: 0;
+  flex: 1 1 100%;
+}
+.footer-partners__chip {
+  background: #fff;
+  border-radius: var(--radius-m);
+  padding: var(--space-2) var(--space-4);
+  display: inline-flex;
+  align-items: center;
+}
+.footer-partners__chip img { height: 40px; width: auto; display: block; }
 .hero__text { flex: 1 1 auto; min-width: 0; }
 @media (max-width: 760px) {
   .hero__layout { flex-direction: column; text-align: center; }
@@ -687,12 +737,15 @@ p { margin: 0 0 var(--space-4); }
   </div>
 </header>
 
+<main class="site-main">
+
 <section class="hero">
+  <div class="religious-backdrop" aria-hidden="true"></div>
   <div class="container hero__layout">
     <div class="hero__portrait">
       <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDAwIDQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0icG9ydHJhaXRUaXRsZSI+CiAgPHRpdGxlIGlkPSJwb3J0cmFpdFRpdGxlIj5QbGFjZWhvbGRlciBwb3J0cmFpdDwvdGl0bGU+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxNDUyM2YiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMGQzYjJlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGNsaXBQYXRoIGlkPSJjaXJjbGVDbGlwIj4KICAgICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxOTAiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgoKICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTE3YTM0IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjIgNiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjY2lyY2xlQ2xpcCkiPgogICAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPgogICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTcwIiByPSI3MiIgZmlsbD0iI2YzZWFkNCIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNIDcwIDQwMCBDIDcwIDI4MCAxMjAgMjM1IDIwMCAyMzUgQyAyODAgMjM1IDMzMCAyODAgMzMwIDQwMCBaIiBmaWxsPSIjZjNlYWQ0IiBvcGFjaXR5PSIwLjkiLz4KICA8L2c+CgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTkwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmYWY4ZjMiIHN0cm9rZS13aWR0aD0iNiIvPgo8L3N2Zz4K" alt="" width="220" height="220">
     </div>
-    <div class="hero__text">
+    <div class="hero__text reveal-fade-up">
       <p class="eyebrow" style="color: rgba(250,248,243,0.85);">
         <span class="i18n-ar">في ذكرى</span><span class="i18n-en">In loving memory</span>
       </p>
@@ -738,8 +791,8 @@ p { margin: 0 0 var(--space-4); }
       <span class="i18n-ar">قصة موجزة</span><span class="i18n-en">A brief story</span>
     </h2>
     <p class="prose">
-      <span class="i18n-ar">[نص قابل للتعديل] وُلد عبدالله العجلان عام [xxxx]، وتوفي في ١٧ صفر ١٤٤٨هـ الموافق ١٠ سبتمبر ٢٠٢٦م، بعد أن أمضى حياته في خدمة أسرته ومجتمعه. أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
-      <span class="i18n-en">[Editable text] Abdullah Alajlan was born in [year], and passed away on 10 September 2026 (17 Safar 1448H), after a life spent in service to his family and community. This platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
+      <span class="i18n-ar">[نص قابل للتعديل] وُلد عبدالله العجلان عام [xxxx]، وتوفي في ٢٨ ذو القعدة ١٤٤٧هـ الموافق ١٥ مايو ٢٠٢٦م، بعد أن أمضى حياته في خدمة أسرته ومجتمعه. أسّست هذه المنصة لتكون بابًا يواصل من خلاله كل من عرفه أو سمع عنه الدعاء له والاستفادة مما تركه من أثر.</span>
+      <span class="i18n-en">[Editable text] Abdullah Alajlan was born in [year], and passed away on 15 May 2026 (28 Dhu al-Qi'dah 1447H), after a life spent in service to his family and community. This platform was created as a place for anyone who knew him, or hears about him, to continue praying for him and benefiting from what he left behind.</span>
     </p>
   </div>
 </section>
@@ -755,6 +808,8 @@ p { margin: 0 0 var(--space-4); }
     </a>
   </div>
 </section>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -775,6 +830,13 @@ p { margin: 0 0 var(--space-4); }
           <span class="i18n-en">Digital trust stamp (pending certification)</span>
         </span>
       </div>
+    </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
     </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>

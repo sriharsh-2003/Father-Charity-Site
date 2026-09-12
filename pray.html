@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/main.css">
+<script src="assets/data/site-config.js"></script>
+<script src="assets/js/site-config-apply.js"></script>
 </head>
 <body>
 
@@ -34,8 +36,11 @@
   </div>
 </header>
 
-<section class="section--tight" style="padding-top: var(--space-6);">
-  <div class="container prose">
+<main class="site-main">
+
+<section class="page-hero" style="padding-block: var(--space-6);">
+  <div class="religious-backdrop" aria-hidden="true"></div>
+  <div class="container prose page-hero__content reveal">
     <p class="eyebrow"><span class="i18n-ar">ادعُ له</span><span class="i18n-en">Pray for him</span></p>
     <h1><span class="i18n-ar">اختر آية، وادعُ له</span><span class="i18n-en">Choose a verse, and pray for him</span></h1>
     <p class="text-muted">
@@ -46,7 +51,7 @@
 </section>
 
 <section class="section--tight">
-  <div class="container prose">
+  <div class="container prose reveal">
     <div id="verse-picker"></div>
     <a id="verse-open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
       <span class="i18n-ar">فتح الآية للاستماع أو القراءة على Quran.com ↗</span>
@@ -80,7 +85,7 @@
 </section>
 
 <section class="section--tight section--tinted">
-  <div class="container text-center prose">
+  <div class="container text-center prose reveal">
     <p><span class="i18n-ar">إن أردت المساهمة بأكثر من الدعاء</span><span class="i18n-en">If you'd like to contribute more than a prayer</span></p>
     <a class="btn btn--secondary" href="donate.html">
       <span class="i18n-ar">صفحة التبرع</span><span class="i18n-en">Go to the donation page</span>
@@ -96,6 +101,8 @@
   </div>
 </section>
 
+</main>
+
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -108,6 +115,13 @@
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
     </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
+    </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
     </div>
@@ -118,5 +132,6 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/common.js"></script>
 <script src="assets/js/pray.js"></script>
+<script src="assets/js/reveal.js"></script>
 </body>
 </html>

@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/main.css">
+<script src="assets/data/site-config.js"></script>
+<script src="assets/js/site-config-apply.js"></script>
 </head>
 <body>
 
@@ -34,8 +36,11 @@
   </div>
 </header>
 
-<section class="section--tight" style="padding-top: var(--space-6);">
-  <div class="container">
+<main class="site-main">
+
+<section class="page-hero" style="padding-block: var(--space-6);">
+  <div class="religious-backdrop" aria-hidden="true"></div>
+  <div class="container page-hero__content reveal">
     <p class="eyebrow"><span class="i18n-ar">منصة المعرفة</span><span class="i18n-en">Knowledge Hub</span></p>
     <h1><span class="i18n-ar">مقالات ومحتوى نافع</span><span class="i18n-en">Articles and beneficial content</span></h1>
     <p class="text-muted prose">
@@ -47,13 +52,13 @@
 
 <section class="section--tight">
   <div class="container">
-    <div class="card-grid">
-      <a class="card" href="article-dua.html" style="text-decoration:none;">
+    <div class="card-grid reveal-group">
+      <a class="card reveal" href="article-dua.html" style="text-decoration:none;">
         <h3><span class="i18n-ar">فضل الدعاء للميت</span><span class="i18n-en">The value of praying for the deceased</span></h3>
         <p class="text-muted i18n-ar">مقالة قصيرة حول أثر الدعاء وصدقته الجارية.</p>
         <p class="text-muted i18n-en">A short piece on the impact of prayer and ongoing charity.</p>
       </a>
-      <a class="card" href="article-visiting.html" style="text-decoration:none;">
+      <a class="card reveal" href="article-visiting.html" style="text-decoration:none;">
         <h3><span class="i18n-ar">آداب زيارة القبور</span><span class="i18n-en">Etiquette of visiting graves</span></h3>
         <p class="text-muted i18n-ar">إرشادات مختصرة لزيارة محترمة وهادئة.</p>
         <p class="text-muted i18n-en">Brief guidance for a respectful, quiet visit.</p>
@@ -61,6 +66,8 @@
     </div>
   </div>
 </section>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -74,6 +81,13 @@
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
     </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
+    </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
     </div>
@@ -82,5 +96,6 @@
 
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/common.js"></script>
+<script src="assets/js/reveal.js"></script>
 </body>
 </html>

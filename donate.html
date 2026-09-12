@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/main.css">
+<script src="assets/data/site-config.js"></script>
+<script src="assets/js/site-config-apply.js"></script>
 </head>
 <body>
 
@@ -34,20 +36,74 @@
   </div>
 </header>
 
-<section class="section" style="padding-top: var(--space-6);">
-  <div class="container prose text-center" style="margin-inline:auto;">
+<main class="site-main">
+
+<section class="page-hero">
+  <div class="religious-backdrop" aria-hidden="true"></div>
+  <div class="container prose page-hero__content reveal">
     <p class="eyebrow"><span class="i18n-ar">تبرع</span><span class="i18n-en">Donate</span></p>
-    <h1><span class="i18n-ar">قريبًا</span><span class="i18n-en">Coming soon</span></h1>
+    <h1><span class="i18n-ar">شارك في الأجر الجاري</span><span class="i18n-en">Take part in the ongoing reward</span></h1>
     <p class="text-muted">
-      <span class="i18n-ar">التبرع الإلكتروني غير متاح بعد. نعمل حاليًا على استيفاء التراخيص والتصاريح اللازمة والربط مع بوابة دفع معتمدة قبل تفعيل هذه الخدمة.</span>
-      <span class="i18n-en">Online donations are not available yet. We are working on the required licensing, permits, and an approved payment gateway before this service goes live.</span>
+      <span class="i18n-ar">[نص قابل للتعديل] كل مساهمة تذهب إلى المشاريع الموقوفة باسمه، وتستمر في تقديم النفع لمن بعده بإذن الله.</span>
+      <span class="i18n-en">[Editable text] Every contribution goes toward endowment projects dedicated in his name, continuing to bring benefit to others, God willing.</span>
     </p>
-    <a class="btn btn--primary" href="knowledge-hub.html">
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container" style="max-width: 720px; margin-inline:auto;">
+    <div class="donation-progress glass reveal" data-donation-progress>
+      <div class="donation-progress__stats">
+        <div>
+          <div class="donation-progress__raised">
+            <span data-donation-raised-ar class="i18n-ar">٠</span>
+            <span data-donation-raised-en class="i18n-en">0</span>
+          </div>
+          <p class="donation-progress__target" style="margin:0;">
+            <span class="i18n-ar">من هدف <span data-donation-target-ar></span></span>
+            <span class="i18n-en">of a <span data-donation-target-en></span> target</span>
+          </p>
+        </div>
+        <div class="donation-progress__pct" data-donation-pct>0%</div>
+      </div>
+      <div class="donation-progress__track" role="progressbar" aria-label="Donation progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="donation-progress__bar" data-donation-bar></div>
+      </div>
+      <p class="donation-progress__meta" style="margin:0;">
+        <span>
+          <span class="i18n-ar">آخر تحديث يدوي للمبلغ المجموع</span>
+          <span class="i18n-en">Raised amount, last updated by hand</span>
+        </span>
+        <a href="knowledge-hub.html" style="color:var(--color-primary-700);">
+          <span class="i18n-ar">تصفّح منصة المعرفة ←</span>
+          <span class="i18n-en">→ Browse the knowledge hub</span>
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container prose text-center reveal" style="margin-inline:auto;">
+    <h2><span class="i18n-ar">التبرع الإلكتروني قريبًا</span><span class="i18n-en">Online giving, coming soon</span></h2>
+    <p class="text-muted">
+      <span class="i18n-ar">التبرع الإلكتروني المباشر غير متاح بعد. نعمل حاليًا على استيفاء التراخيص والتصاريح اللازمة والربط مع بوابة دفع معتمدة قبل تفعيل هذه الخدمة. الرقم أعلاه يعكس المبلغ المجموع حتى الآن عبر التحويلات المباشرة، ويُحدَّث يدويًا.</span>
+      <span class="i18n-en">Direct online donations aren't available yet. We're working on the required licensing, permits, and an approved payment gateway before this service goes live. The figure above reflects funds raised so far through direct transfers, and is updated by hand in the meantime.</span>
+    </p>
+    <div class="notice notice--info prose" style="text-align: start; margin-inline:auto;">
+      <p style="margin:0;">
+        <span class="i18n-ar"><strong>للتبرع الآن عبر تحويل بنكي:</strong> [تفاصيل الحساب البنكي قابلة للتعديل] — يُرجى التواصل معنا لتأكيد التحويل وإضافته إلى المبلغ المجموع.</span>
+        <span class="i18n-en"><strong>To give now by bank transfer:</strong> [Editable bank account details] — please get in touch to confirm your transfer so it can be added to the total above.</span>
+      </p>
+    </div>
+    <a class="btn btn--primary" href="knowledge-hub.html" style="margin-top: var(--space-4);">
       <span class="i18n-ar">تصفّح منصة المعرفة بدلًا من ذلك</span>
       <span class="i18n-en">Browse the knowledge hub instead</span>
     </a>
   </div>
 </section>
+
+</main>
 
 <footer class="site-footer">
   <div class="container">
@@ -61,13 +117,23 @@
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
     </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
+    </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
     </div>
   </div>
 </footer>
 
+<script src="assets/data/donation.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/common.js"></script>
+<script src="assets/js/donate.js"></script>
+<script src="assets/js/reveal.js"></script>
 </body>
 </html>

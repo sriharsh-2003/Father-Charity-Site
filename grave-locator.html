@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/main.css">
+<script src="assets/data/site-config.js"></script>
+<script src="assets/js/site-config-apply.js"></script>
 </head>
 <body>
 
@@ -35,8 +37,11 @@
   </div>
 </header>
 
-<section class="section--tight" style="padding-top: var(--space-6);">
-  <div class="container">
+<main class="site-main">
+
+<section class="page-hero" style="padding-block: var(--space-6);">
+  <div class="religious-backdrop" aria-hidden="true"></div>
+  <div class="container page-hero__content reveal">
     <p class="eyebrow"><span class="i18n-ar">زيارة المقابر</span><span class="i18n-en">Grave Locator</span></p>
     <h1><span class="i18n-ar">موضع دفنه</span><span class="i18n-en">His resting place</span></h1>
     <p class="text-muted prose">
@@ -72,6 +77,8 @@
   </div>
 </section>
 
+</main>
+
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -83,6 +90,13 @@
         <p><a href="index.html"><span class="i18n-ar">الرئيسية</span><span class="i18n-en">Home</span></a></p>
         <p><a href="privacy.html"><span class="i18n-ar">إشعار الخصوصية والأمان</span><span class="i18n-en">Privacy &amp; Security Notice</span></a></p>
       </div>
+    </div>
+    <div class="footer-partners">
+      <p class="footer-partners__label">
+        <span class="i18n-ar">بدعم من</span><span class="i18n-en">Supported by</span>
+      </p>
+      <span class="footer-partners__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF"></span>
+      <span class="footer-partners__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector"></span>
     </div>
     <div class="footer-bottom">
       <span><span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span></span>
@@ -96,5 +110,6 @@
 <script src="assets/js/common.js"></script>
 <script src="assets/js/share.js"></script>
 <script src="assets/js/grave-locator.js"></script>
+<script src="assets/js/reveal.js"></script>
 </body>
 </html>
