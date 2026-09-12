@@ -14,6 +14,14 @@
   visitor shares an Arabic sentence, an English visitor shares an English one.
 */
 
+// Fire-and-forget: tells /api/shares a share happened, for the homepage
+// stats section. Never blocks or shows an error to the visitor if this
+// fails (a metrics ping failing shouldn't get in the way of the actual
+// share they're trying to do), and never awaited by callers.
+function recordShare() {
+  fetch("/api/shares", { method: "POST" }).catch(() => {});
+}
+
 function buildShareMenu(widget) {
   const menu = widget.querySelector("[data-share-menu]");
   const url = widget.dataset.url || window.location.href;
@@ -45,6 +53,7 @@ function buildShareMenu(widget) {
     a.target = "_blank";
     a.rel = "noopener noreferrer";
     a.textContent = link.label;
+    a.addEventListener("click", recordShare);
     menu.appendChild(a);
   });
 
@@ -55,6 +64,7 @@ function buildShareMenu(widget) {
     try {
       await navigator.clipboard.writeText(fullText);
       showToast(t().shareCopied, "success");
+      recordShare();
     } catch (e) {
       showToast(fullText);
     }
@@ -82,6 +92,7 @@ function initShareWidgets() {
       if (navigator.share) {
         try {
           await navigator.share({ title: message, text: message, url });
+          recordShare();
           return;
         } catch (e) {
           /* person cancelled the native sheet, fall through to the menu */

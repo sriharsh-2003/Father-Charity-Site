@@ -9,23 +9,46 @@ placeholder waiting on real content/assets.
 
 **Real and working:**
 - Bilingual AR/EN toggle, RTL/LTR switching, saved per device
-- Grave locator: search by name or date, results list, pagination, Leaflet +
-  OpenStreetMap map with markers, all driven by `assets/data/graves.csv`
-- Pray button: per-device localStorage state (see limitation below)
+- Grave locator: single grave record (this is a one-person site, see Round 3
+  below for why search/pagination were removed), Leaflet + OpenStreetMap map
+  with a marker, plus a directions module (typed starting point or "use my
+  location", Google/Apple Maps deep links) -- all driven by
+  `assets/data/graves.csv`
+- "Pray for him": full page with a curated verse picker, optional name/word,
+  submits to a real shared count across all visitors (Round 3, backed by
+  Redis, see below) -- the localStorage-only limitation flagged further
+  down in this doc no longer applies, that was true of the original v0.1
+  pray *button* which pray.html replaced
 - Share: native OS share sheet (Apple/Android) where supported, with a
   WhatsApp / X / Telegram / copy-link fallback menu; the shared message text
   matches whichever language the visitor currently has selected
 - Privacy notice banner + a full privacy/security page (DGA checklist item 41)
+  -- **now out of date, see the flag in Round 5 below**, it still says the
+  site collects no personal data, which stopped being true once prayers and
+  the donation form started asking for a name/message/email
 - Responsive layout, keyboard focus states, reduced-motion respected
+- Browser tab titles and a real favicon on every page (Round 5)
+- Donation form: amount presets, custom amount, name, email, all validated
+  client-side and ready to submit the moment a payment gateway exists
+  (Round 5), though there is nothing to submit *to* yet
+- Knowledge hub articles have real content now, not placeholder text
+  (Round 5) -- still needs a read-through by someone with religious
+  authority before treating the wording as final, see that section
 
 **Placeholder, needs your input before this is presentable:**
 - All bracketed text like `[اسم الوالد]` / `[Father's Name]`, the bio section
-  on the home page, vision/mission/values card copy, footer address
-- The two knowledge-hub articles are sample copy, not final
+  on the home page, footer address, the bank-transfer account details on
+  the donate page, the "editable email" contact address on `privacy.html`
 - Logo mark is a text placeholder (`brand__mark` in the header). Swap for
   the real logo file
-- `assets/data/graves.csv` has 5 sample rows so you can see the search/map
-  working end to end. Replace with the real list
+- `assets/data/graves.csv` grave record still has bracketed placeholders
+  for birth date, address, and cemetery name (name, death date, grave
+  number, and coordinates are real, see Round 4/5 below)
+- Donation progress numbers (`assets/data/donation.js`) are placeholders,
+  currently `0` raised / `200,000` SAR target, waiting on the real figures
+- No payment gateway yet; the donation form is fully built and validated
+  client-side (Round 5) but has nothing to submit to until the client
+  provides one (see `apiEndpoint` in `assets/data/donation.js`)
 
 ## New in this round: visitation dates, testimonies backend, Vercel
 
@@ -119,9 +142,12 @@ deploying.
   public Quran audio APIs, pending your confirmation of which verses/reciter
   to feature (a decision for you, not something to pick unilaterally on a
   memorial site).
-- **Donation name collection.** Accepted as necessary, will need its own
-  data-handling pass (dedup strategy, storage, privacy policy update) once
-  payment gateway work starts.
+- **Donation name collection.** Accepted as necessary. **Partially addressed
+  in Round 5**: the donation form now collects name/email client-side, but
+  the full data-handling pass this bullet asks for (dedup strategy, actual
+  storage, privacy policy update) still hasn't happened, it can't until a
+  real payment gateway exists to submit to. See "Still open, updated" at
+  the end of this document for the current state.
 
 ## Colors, type, spacing: read this before judging how it looks
 
@@ -145,15 +171,13 @@ search fields, notifications, pagination) are built with the interactive
 states the checklist calls for (default/hover/focus/disabled), but their
 exact shape, radius, and spacing are our placeholder guesses, not DGA's.
 
-## Two things flagged for you specifically
+## Two things flagged for you specifically (v0.1 -- see note on #1)
 
-1. **Pray button ≠ real analytics.** It's localStorage only, per device, with
-   no server. It can remember "you already prayed for this grave" on return
-   visits, and show a local tally on your own device. It **cannot** show a
-   shared count across all visitors ("1,204 people prayed"). That needs a
-   server and a database, which the brief ruled out for the MVP. Worth
-   deciding now whether that limitation is acceptable long-term, since
-   "no database" and "a real shared counter" are mutually exclusive.
+1. ~~**Pray button ≠ real analytics.**~~ **Superseded in Round 3.** This
+   applied to the original v0.1 pray button (localStorage only, no server).
+   `pray.html` replaced it with a real, shared, server-backed count. Left
+   here for the record rather than deleted, since it explains *why* Round 3
+   made the change it made.
 2. **CSV, not a database, as requested.** A CSV that "can expand to
    large sizes" has a ceiling. A few hundred rows load fine in the browser.
    Several thousand+ rows with photos/notes will start to feel slow on
@@ -350,3 +374,164 @@ to the website. I didn't generate it yet since encoding the wrong URL onto
 carved stone is expensive to fix, tell me exactly which page it should
 point to (the grave locator page is the natural fit) and your final live
 domain, and I'll generate it.
+
+## Round 5: title bug, favicon, footer/donation/articles, security incident
+
+**Security incident: a live GitHub personal access token was pasted into
+chat during this round**, same category as the Round 3 Redis-credentials
+incident. It turned out to be read-only (couldn't push), which is why the
+work this round was handed back as a zip/patch instead of pushed directly.
+Rotate it from GitHub Settings -> Developer settings -> Personal access
+tokens regardless, read-only tokens are still credentials.
+
+**Fixed: browser tab title showed raw markup.** Every page's `<title>` was
+`<title><span class="i18n-ar">...</span><span class="i18n-en">...</span></title>`,
+which doesn't work, a `<title>` element can only hold plain text, so the
+browser tab literally showed the `<span>` tags. Moved the AR/EN strings to
+`data-title-ar` / `data-title-en` on `<html>`, and `assets/js/i18n.js` now
+sets `document.title` from those on load and on every language toggle.
+
+**Added a favicon.** `assets/img/favicon.svg` plus PNG fallbacks
+(`favicon-32.png`, `favicon-180.png`, `favicon-192.png`), a small circular
+crescent-and-dot mark in the site's own green/gold tokens, not a generic
+icon. Linked in every page's `<head>`.
+
+**Footer redesign (first pass, refined further in Round 7).** Removed the
+separate "Supported by" heading and the white rectangular logo chips;
+removed the "digital trust stamp (pending certification)" placeholder
+entirely rather than show a badge with nothing real behind it.
+
+**Grave locator: two real bugs fixed.**
+- The map pin's popup name (Arabic/English) was only ever set once, at
+  `initMap()`. Switching languages afterward left it showing whatever
+  language was active on first load. Split into a separate
+  `updateMarkerPopup()` function, called on every `langchange` event now.
+- Switching languages repeatedly was silently stacking duplicate click/input
+  listeners onto the directions box (every `renderGrave()` call re-ran the
+  whole binding function). Split into `bindDirectionsListeners()` (runs
+  once, guarded by a flag) vs. label updates (run every language switch).
+
+**Donate page: went from static text to a real form.** Amount presets,
+custom amount, name, email, all validated client-side. Submission is
+gated on `DONATION_CAMPAIGN.apiEndpoint` in `assets/data/donation.js`:
+`null` right now, which shows an honest "payment gateway isn't connected
+yet" message instead of pretending to process anything. Once the client
+provides a real gateway endpoint, that one config value is the only thing
+that needs to change, the `fetch()` call and payload are already written.
+
+**Knowledge hub articles rewritten.** Both were `[Editable text]`
+placeholders one or two lines long. Now real, fuller content (ways to pray
+for the deceased, etiquette of visiting graves), same caveat as the verse
+list in Round 3: **needs review by someone with religious authority**
+before treating the wording as final, I'm not qualified to be the
+authority on that content, only to draft something reasonable to review.
+
+**preview-home.html synced** to match the footer/title/favicon changes
+above, it's still a standalone convenience file (see "Getting a live
+preview" below), not wired to the real site's JS.
+
+## Round 6: fixes to Round 5's own footer/search/donation work
+
+**Grave locator search button did nothing visible, now actually does
+something.** It was quietly updating `href` attributes on two buttons
+further down the page, invisible unless you happened to notice those
+buttons changed. Pressing Search (or Enter) now directly opens Google
+Maps (Apple Maps on iOS) in a new tab with directions from the typed
+address, immediately. Shows an inline message if no starting point has
+been given yet instead of failing silently.
+
+**Donation progress figure was wrong.** `42,500` SAR raised was
+placeholder/example data from Round 5's own build, not real, and wasn't
+flagged clearly enough at the time to make that obvious. Zeroed to `0`
+raised / `200,000` SAR target in `assets/data/donation.js`, waiting on the
+actual numbers.
+
+**Footer logos made bigger** (22px to 34px), the Round 5 chips were too
+small to actually see. Superseded by the no-chip approach in Round 7.
+
+## Round 7: footer logos on transparent background, real crescent, banner consistency, scrollbar fix
+
+**Footer logos redone again, this time to match the reference site's
+approach directly**: no card/chip behind them at all. `filter:
+brightness(0) invert(1)` turns the AWQAF/NCNP marks into a flat white
+silhouette that reads fine straight on the dark green background, same
+visual language as the reference footer that was shared for comparison.
+
+**The floating footer ornament went through three attempts before landing:**
+a 14px crescent icon (too small to read, Round 5) -> a shapeless ambient
+glow (had no legible form, "too blurry", Round 6) -> an actual crescent
+shape at a real size (~140px) with a soft drift animation (Round 7, current).
+It's a proper SVG crescent path (the well-known "moon" icon shape,
+`fill-rule` evenodd tricks didn't render reliably across the two earlier
+attempts, this path doesn't need one), at low opacity so it stays
+background texture rather than competing with the actual content.
+
+**Page-hero banner was inconsistent across subpages, now fixed.**
+`donate.html`'s banner had a different (taller) top/bottom padding than
+every other subpage, from a missing `padding-block: var(--space-6)`
+override the rest of the pages shared. `privacy.html` had no gradient hero
+banner at all, just plain text with no `page-hero` section. Both now match
+the rest structurally (remaining height differences between pages are just
+from differing amounts of subtitle text, that part is expected).
+
+**Fixed a scrollbar flash during page-load animations.** Elements using
+the `.reveal` fade-up-on-scroll effect start slightly below their resting
+position (`translateY(18px)`); a `.reveal` element near the bottom of a
+page could transiently push the page's scrollable area a few pixels past
+viewport height before settling, which flashes the browser's vertical
+scrollbar in and out. Added `scrollbar-gutter: stable` globally (in
+`assets/css/main.css`, on the `html` rule), which reserves that space
+permanently instead of only when actually needed.
+
+### Files changed, Rounds 5-7
+
+Modified: `index.html`, `grave-locator.html`, `pray.html`,
+`knowledge-hub.html`, `donate.html`, `article-dua.html`,
+`article-visiting.html`, `privacy.html`, `admin.html`,
+`preview-home.html`, `assets/css/main.css`, `assets/js/i18n.js`,
+`assets/js/grave-locator.js`, `assets/js/donate.js`,
+`assets/data/donation.js`.
+
+New: `assets/img/favicon.svg`, `assets/img/favicon-32.png`,
+`assets/img/favicon-180.png`, `assets/img/favicon-192.png`.
+
+## Still open, updated
+
+Carried over from earlier rounds, still not done:
+- **Nearest metro/bus/route for the graveyard-visiting enhancement.**
+  Unchanged since Round 1, still pending your decision on linking to
+  official journey planners vs. custom routing.
+- **Quran verse audio for Blessing Sharing.** Unchanged since Round 3,
+  still needs Quran Foundation API credentials plus your call on which
+  verses/reciter, see the Round 3 note above.
+
+New from this stretch of rounds:
+- **`privacy.html` is now inaccurate and should be rewritten.** It states
+  the site "does not collect personal data." That stopped being true in
+  Round 3 (prayer name/message, stored server-side) and again in Round 5
+  (donation form asks for name/email, though nothing is sent anywhere
+  with it yet since there's no gateway or email service connected). This
+  needs a real rewrite covering what's collected, where it's stored, how
+  long it's kept, and how to request removal, not a quiet patch.
+- **Testimony/prayer editing isn't built, only deleting.** `admin.html` has
+  a Delete button per entry (calls `/api/prayers` with the admin token).
+  There's no Edit. The only way to change a testimony's wording today is
+  a raw Redis command in the Upstash console (Vercel dashboard -> Storage
+  tab -> your database -> Data Browser, the entries live in a list under
+  the key `prayers:list`, one JSON object per entry), which is easy to get
+  wrong by hand. Worth a proper Edit button in `admin.html` if this comes
+  up with any regularity.
+- **Death date mismatch, still unresolved.** The bio text on the home page
+  and `assets/data/graves.csv`'s `death_date` field both say 15 May 2026.
+  Round 4's notes say the confirmed date (from the stone-plaque proof
+  image) is 10 September 2026 (17 Safar 1448H). One of these is wrong and
+  I haven't touched either, flagging it rather than guessing which.
+- **Donation figures are placeholders.** `0` raised / `200,000` SAR target
+  in `assets/data/donation.js`, needs the real numbers.
+- **Email field on the donate page isn't functional.** It's captured in
+  the browser but never sent anywhere (no email service is wired up, and
+  submission is gated on the payment gateway anyway, which doesn't exist
+  yet). The "to send your donation receipt" copy next to it is aspirational
+  until both of those exist, worth softening that wording if the form goes
+  live before the gateway does.
+

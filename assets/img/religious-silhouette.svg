@@ -7,7 +7,7 @@
   owns the rights to later; see README-handoff.md.
 
   Toggle visibility site-wide via `showReligiousBackdrop` in
-  assets/data/site-config.js -- no client may not always want it.
+  assets/data/site-config.js, since a client may not always want it.
 -->
 <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
   <g fill="#0d3b2e">

@@ -100,6 +100,7 @@
 </section>
 
 <section class="section section--tinted">
+  <div class="religious-backdrop" aria-hidden="true"></div>
   <div class="container reveal">
     <p class="eyebrow"><span class="i18n-ar">من دعا له</span><span class="i18n-en">Who has prayed for him</span></p>
     <h2><span class="i18n-ar">دعوات من زوار هذه الصفحة</span><span class="i18n-en">Prayers from visitors to this page</span></h2>
@@ -108,6 +109,27 @@
     <a class="btn btn--secondary" href="pray.html" style="margin-top: var(--space-4);">
       <span class="i18n-ar">ادعُ له أنت أيضًا</span><span class="i18n-en">Pray for him too</span>
     </a>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="container reveal">
+    <p class="eyebrow"><span class="i18n-ar">الأثر حتى الآن</span><span class="i18n-en">The impact so far</span></p>
+    <h2><span class="i18n-ar">بالأرقام</span><span class="i18n-en">In numbers</span></h2>
+    <div class="stats-grid" data-site-stats>
+      <div class="stat-card">
+        <p class="stat-card__value" data-stat-blessings>&#8212;</p>
+        <p class="stat-card__label"><span class="i18n-ar">بركة</span><span class="i18n-en">Blessings</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__value" data-stat-donations>&#8212;</p>
+        <p class="stat-card__label"><span class="i18n-ar">ريال تبرعات</span><span class="i18n-en">SAR donated</span></p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-card__value" data-stat-shares>&#8212;</p>
+        <p class="stat-card__label"><span class="i18n-ar">مشاركة</span><span class="i18n-en">Shares</span></p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -151,11 +173,13 @@
 
 <script src="assets/vendor/papaparse/papaparse.min.js"></script>
 <script src="assets/data/verses.js"></script>
+<script src="assets/data/donation.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/common.js"></script>
 <script src="assets/js/share.js"></script>
 <script src="assets/js/pray.js"></script>
 <script src="assets/js/visitation-dates.js"></script>
+<script src="assets/js/stats.js"></script>
 <script src="assets/js/reveal.js"></script>
 </body>
 </html>

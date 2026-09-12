@@ -70,7 +70,12 @@ html[lang="en"] { direction: ltr; }
 .stack > * + * { margin-block-start: var(--space-5); }
 .section { padding-block: var(--space-8); }
 .section--tight { padding-block: var(--space-6); }
-.section--tinted { background: var(--color-aura-gradient); }
+.section--tinted {
+  position: relative;
+  background: var(--color-aura-gradient);
+  overflow: hidden;
+}
+.section--tinted > .container { position: relative; z-index: 1; }
 
 /* =========================================================================
    TYPOGRAPHY
@@ -290,6 +295,30 @@ html.no-portrait .share-widget { justify-content: center; }
   pointer-events: none;
 }
 html.no-religious-backdrop .religious-backdrop { display: none; }
+
+/* Slightly stronger + more compact version for the shorter "who has
+   prayed" section: at the hero's height the default 0.1 opacity /
+   1100x500 sizing is visible (see the home hero), but in a shorter
+   section most of the artwork's domes get cropped above the section's
+   own top edge, leaving only flat silhouette with nothing recognizable
+   showing. Sized down so the recognizable part fits, and nudged up in
+   opacity to actually read against the section's own content. */
+.section--tinted .religious-backdrop {
+  background-size: 780px 340px;
+  opacity: 0.16;
+}
+
+/* Subpage page-hero banners are shorter (163-313px depending on how much
+   subtitle text a given page has) than the default 500px-tall backdrop
+   image, which -- now that the image itself actually renders (see the
+   fixed XML comment in religious-silhouette.svg) -- was cropping into
+   just the tall thin minaret shafts near the top of the artwork instead
+   of the recognizable domes/skyline further down. Scaled down so the
+   recognizable part fits in a short banner instead of reading as a
+   repeating picket-fence pattern. */
+.page-hero .religious-backdrop {
+  background-size: 620px 230px;
+}
 
 /* =========================================================================
    PAGE HERO (unified light-weight banner for inner pages)
@@ -534,34 +563,38 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 }
 html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scaleX(-1); }
 
-/* A real crescent, sized to actually be seen, gently drifting. The
-   previous attempt was a tiny 14px icon (illegible) and, after that, a
-   plain glow with no shape at all (too blurry, per feedback) -- this is
-   the middle ground: a clearly-a-crescent shape at low opacity so it
-   still reads as background texture rather than a competing element. */
+/* A real crescent, sized to actually be seen, with a soft gold glow
+   around it, gently drifting. Went through a few attempts: a 14px icon
+   (illegible) -> a shapeless glow (no legible form) -> a legible crescent
+   with no glow, pinned right at the footer's clipped top edge so it read
+   as a flat sticker cut off in the corner. This version sits fully
+   inside the footer (no more clipping) and drop-shadow gives it the soft
+   halo the earlier flat version was missing, without blurring the shape
+   itself into mush. */
 .site-footer::after {
   content: "";
   position: absolute;
-  inset-inline-end: 6%;
-  top: -10%;
-  width: 140px;
-  height: 140px;
+  inset-inline-end: 8%;
+  top: 12%;
+  width: 130px;
+  height: 130px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23a17a34' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.3;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 18px rgba(161, 122, 52, 0.55)) drop-shadow(0 0 40px rgba(161, 122, 52, 0.3));
   animation: footer-crescent-drift 14s ease-in-out infinite;
   pointer-events: none;
 }
-html[dir="rtl"] .site-footer::after { inset-inline-end: 6%; transform: scaleX(-1); }
+html[dir="rtl"] .site-footer::after { inset-inline-end: 8%; }
 @keyframes footer-crescent-drift {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-14px, 12px); }
+  0%, 100% { transform: translate(0, 0) scaleX(1); }
+  50% { transform: translate(-14px, 12px) scaleX(1); }
 }
 html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl; }
 @keyframes footer-crescent-drift-rtl {
-  0%, 100% { transform: scaleX(-1) translate(0, 0); }
-  50% { transform: scaleX(-1) translate(-14px, 12px); }
+  0%, 100% { transform: translate(0, 0) scaleX(-1); }
+  50% { transform: translate(-14px, 12px) scaleX(-1); }
 }
 
 /* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
@@ -802,6 +835,38 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   border-color: var(--color-primary-500);
   background: var(--color-primary-100);
   color: var(--color-primary-900);
+}
+
+/* =========================================================================
+   HOME PAGE STATS ("impact so far": blessings / SAR donated / shares)
+   Numbers are populated by assets/js/stats.js. Same card language as the
+   rest of the site (radius, border, surface color) rather than inventing
+   a new visual style just for three numbers.
+   ========================================================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+.stat-card {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  border-radius: var(--radius-m);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}
+.stat-card__value {
+  margin: 0;
+  font-size: var(--font-size-display-m);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-700);
+  font-variant-numeric: tabular-nums;
+}
+.stat-card__label {
+  margin: var(--space-1) 0 0;
+  color: var(--color-ink-600);
+  font-size: var(--font-size-body-s);
 }
 
 /* =========================================================================
