@@ -1,0 +1,47 @@
+<!--
+  Second backdrop composition, deliberately different from
+  religious-silhouette.svg's skyline: a single large pointed arch (mihrab
+  shape) off-center, with a scattered eight-point star / lattice motif
+  echoing mashrabiya geometric patterning, rather than another row of
+  domes and minarets. Used where the skyline version is already in use
+  elsewhere on the same page, so the two don't read as a copy-pasted
+  repeat of each other. Same illustrated-vector, not-a-photo reasoning as
+  religious-silhouette.svg, see that file's own comment for why.
+-->
+<svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+  <g fill="#0d3b2e">
+    <!-- large off-center pointed arch, anchored right-of-center -->
+    <path d="M 430 500 L 430 300 Q 430 170 560 170 Q 690 170 690 300 L 690 500 Z"/>
+    <!-- inner arch reveal, echoes a mihrab niche -->
+    <path d="M 470 500 L 470 305 Q 470 210 560 210 Q 650 210 650 305 L 650 500 Z" fill="#faf8f3" opacity="0.16"/>
+
+    <!-- slender finial atop the arch -->
+    <rect x="552" y="128" width="16" height="46"/>
+    <circle cx="560" cy="118" r="10"/>
+    <path d="M 549 108 q 11 -20 22 0 q -11 9 -22 0 Z"/>
+
+    <!-- eight-point star motif, scattered at varying sizes, left of the arch -->
+    <g opacity="0.5">
+      <path transform="translate(120 220) scale(1.1)" d="M20 0 L25 15 L40 15 L28 24 L33 40 L20 30 L7 40 L12 24 L0 15 L15 15 Z"/>
+      <path transform="translate(230 130) scale(0.7)" d="M20 0 L25 15 L40 15 L28 24 L33 40 L20 30 L7 40 L12 24 L0 15 L15 15 Z"/>
+      <path transform="translate(70 330) scale(0.55)" d="M20 0 L25 15 L40 15 L28 24 L33 40 L20 30 L7 40 L12 24 L0 15 L15 15 Z"/>
+    </g>
+
+    <!-- small dome, lower left, unrelated scale, keeps the composition from
+         feeling like a single centered motif -->
+    <rect x="40" y="400" width="90" height="60"/>
+    <path d="M 40 400 Q 85 345 130 400 Z"/>
+    <circle cx="85" cy="338" r="6"/>
+
+    <!-- ground line -->
+    <rect x="0" y="460" width="900" height="40"/>
+
+    <!-- lattice dots trailing off to the far right -->
+    <g opacity="0.22">
+      <circle cx="740" cy="420" r="5"/>
+      <circle cx="770" cy="440" r="5"/>
+      <circle cx="800" cy="410" r="5"/>
+      <circle cx="820" cy="445" r="4"/>
+    </g>
+  </g>
+</svg>

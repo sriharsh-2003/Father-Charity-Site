@@ -68,8 +68,12 @@ html[lang="en"] { direction: ltr; }
 }
 .prose { max-width: var(--content-measure); }
 .stack > * + * { margin-block-start: var(--space-5); }
-.section { padding-block: var(--space-8); }
-.section--tight { padding-block: var(--space-6); }
+.section { position: relative; overflow: hidden; padding-block: var(--space-8); }
+.section--tight { position: relative; overflow: hidden; padding-block: var(--space-6); }
+/* Content stays above any decorative glow/wave/backdrop elements added as
+   earlier siblings within a section (they're unpositioned z-index:auto,
+   this just guarantees the actual content wins regardless of DOM order). */
+.section > .container, .section--tight > .container { position: relative; z-index: 1; }
 .section--tinted {
   position: relative;
   background: var(--color-aura-gradient);
@@ -296,16 +300,17 @@ html.no-portrait .share-widget { justify-content: center; }
 }
 html.no-religious-backdrop .religious-backdrop { display: none; }
 
-/* Slightly stronger + more compact version for the shorter "who has
-   prayed" section: at the hero's height the default 0.1 opacity /
-   1100x500 sizing is visible (see the home hero), but in a shorter
-   section most of the artwork's domes get cropped above the section's
-   own top edge, leaving only flat silhouette with nothing recognizable
-   showing. Sized down so the recognizable part fits, and nudged up in
-   opacity to actually read against the section's own content. */
+/* The "who has prayed" section reuses the same .religious-backdrop
+   mechanism but with a different composition (religious-silhouette-alt.svg,
+   a single arch + scattered star motif rather than another skyline) and
+   positioned to the opposite side, so it doesn't read as the exact same
+   asset copy-pasted into a second spot on the same page as the page-hero
+   above it. */
 .section--tinted .religious-backdrop {
-  background-size: 780px 340px;
-  opacity: 0.16;
+  background-image: url("../img/religious-silhouette-alt.svg");
+  background-position: bottom left;
+  background-size: 620px 340px;
+  opacity: 0.18;
 }
 
 /* Subpage page-hero banners are shorter (163-313px depending on how much
@@ -318,6 +323,74 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
    repeating picket-fence pattern. */
 .page-hero .religious-backdrop {
   background-size: 620px 230px;
+}
+
+/* =========================================================================
+   AMBIENT GLOW ("heavenly" soft light blooms)
+   Blurred radial-gradient blobs, drifting slowly. Placed behind content
+   inside any position:relative section that opts in, sized/positioned
+   per instance via inline style since each spot needs a different size
+   and placement -- these classes only set color, blur and motion.
+   ========================================================================= */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(50px);
+  animation: ambient-glow-drift 18s ease-in-out infinite;
+  z-index: 0;
+}
+.ambient-glow--gold { background: radial-gradient(circle, rgba(161, 122, 52, 0.4) 0%, rgba(161, 122, 52, 0) 72%); }
+.ambient-glow--cream { background: radial-gradient(circle, rgba(250, 248, 243, 0.75) 0%, rgba(250, 248, 243, 0) 72%); }
+.ambient-glow--rose { background: radial-gradient(circle, rgba(224, 158, 128, 0.35) 0%, rgba(224, 158, 128, 0) 72%); }
+@keyframes ambient-glow-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.75; }
+  50% { transform: translate(24px, -18px) scale(1.12); opacity: 1; }
+}
+
+/* =========================================================================
+   FLOWING WAVES (serenity motif, bottom edge of a section)
+   Two color variants of the same wave shape. NOTE: this deliberately does
+   NOT use fill="currentColor" + a CSS `color` modifier -- currentColor
+   only inherits into an *inline* SVG in the document; an SVG loaded as an
+   external background-image (even a data: URI) is opaque replaced
+   content and can't see the page's CSS at all, so currentColor silently
+   resolves to black there. First version of this looked like a dark
+   smudge for exactly that reason. Each variant below bakes its own
+   fill color into the encoded SVG instead. Blurred so it reads as soft
+   moving water rather than a crisp graphic element.
+   ========================================================================= */
+.flowing-waves {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -1px;
+  height: 70px;
+  background-repeat: repeat-x;
+  background-size: 1200px 70px;
+  filter: blur(3px);
+  animation: waves-drift 26s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Pale cream wash, for use on the gradient/tinted sections. */
+.flowing-waves--on-tint {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23faf8f3' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+/* Warm gold wash, for use on plain white sections (needs to be visible
+   against --color-surface, a pale wash the same color as the page would
+   vanish entirely). */
+.flowing-waves--on-white {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23a17a34' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E");
+  opacity: 0.12;
+}
+@keyframes waves-drift {
+  from { background-position-x: 0; }
+  to { background-position-x: -1200px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambient-glow, .flowing-waves { animation: none; }
 }
 
 /* =========================================================================
@@ -347,7 +420,7 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-elevated), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .hero .text-muted { color: var(--color-ink-600); }
 .hero__actions { display: flex; gap: var(--space-4); margin-top: var(--space-6); flex-wrap: wrap; }
@@ -581,8 +654,13 @@ html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scale
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23a17a34' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.55;
-  filter: drop-shadow(0 0 18px rgba(161, 122, 52, 0.55)) drop-shadow(0 0 40px rgba(161, 122, 52, 0.3));
+  opacity: 0.6;
+  /* Three layered glows -- tight, medium, wide -- read as actual moonlight
+     falling off with distance rather than one uniform halo ring. */
+  filter:
+    drop-shadow(0 0 10px rgba(243, 234, 212, 0.55))
+    drop-shadow(0 0 34px rgba(161, 122, 52, 0.6))
+    drop-shadow(0 0 70px rgba(161, 122, 52, 0.35));
   animation: footer-crescent-drift 14s ease-in-out infinite;
   pointer-events: none;
 }
@@ -595,6 +673,38 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
 @keyframes footer-crescent-drift-rtl {
   0%, 100% { transform: translate(0, 0) scaleX(-1); }
   50% { transform: translate(-14px, 12px) scaleX(-1); }
+}
+
+/* Scattered "stars", each one a plain dot with its own glow. Three depth
+   tiers (near/mid/far) so the sky doesn't read as one flat layer: nearer
+   stars stay sharper and swing less, farther ones blur and fade more on
+   each cycle, which is what actually reads as depth/movement rather than
+   everything twinkling in lockstep. Positions are fixed percentages (not
+   mirrored for RTL) since a scattered star field looks the same read in
+   either direction. */
+.footer-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.footer-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #f8f2e2;
+}
+.footer-star--near { width: 3px; height: 3px; animation: star-twinkle-near 5s ease-in-out infinite; }
+.footer-star--mid { width: 2.5px; height: 2.5px; animation: star-twinkle-mid 6s ease-in-out infinite; }
+.footer-star--far { width: 2px; height: 2px; animation: star-twinkle-far 7s ease-in-out infinite; }
+@keyframes star-twinkle-near {
+  0%, 100% { opacity: 0.5; filter: blur(0px) drop-shadow(0 0 2px rgba(248, 242, 226, 0.8)); transform: scale(0.9); }
+  50% { opacity: 1; filter: blur(0.3px) drop-shadow(0 0 5px rgba(248, 242, 226, 1)); transform: scale(1.3); }
+}
+@keyframes star-twinkle-mid {
+  0%, 100% { opacity: 0.25; filter: blur(0.4px) drop-shadow(0 0 2px rgba(248, 242, 226, 0.6)); transform: scale(0.7); }
+  50% { opacity: 0.9; filter: blur(1.2px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.8)); transform: scale(1.1); }
+}
+@keyframes star-twinkle-far {
+  0%, 100% { opacity: 0.15; filter: blur(0.8px); transform: scale(0.5); }
+  50% { opacity: 0.65; filter: blur(2px); transform: scale(0.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-star { animation: none; opacity: 0.6; }
 }
 
 /* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
@@ -855,6 +965,7 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   border-radius: var(--radius-m);
   border: 1px solid var(--color-border);
   background: var(--color-surface-raised);
+  box-shadow: var(--shadow-elevated);
 }
 .stat-card__value {
   margin: 0;

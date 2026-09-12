@@ -82,6 +82,10 @@
   --radius-m: 10px;
   --radius-full: 999px;
   --shadow-card: 0 1px 2px rgba(20, 30, 25, 0.06), 0 4px 16px rgba(20, 30, 25, 0.06);
+  /* Layered, softer-edged shadow for glass/elevated elements -- a tight
+     contact shadow plus a much larger, softer ambient one underneath it
+     reads as real depth rather than a flat drop-shadow. */
+  --shadow-elevated: 0 1px 1px rgba(20, 30, 25, 0.05), 0 8px 12px rgba(20, 30, 25, 0.07), 0 24px 48px rgba(20, 30, 25, 0.09);
 
   /* ---- Layout ---- */
   --content-max-width: 1180px;
