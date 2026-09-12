@@ -191,13 +191,22 @@ function bindDirectionsListeners() {
   const useLocationBtn = document.getElementById("directions-use-location");
   const box = document.getElementById("directions-box");
 
-  // The links below already update live as you type (kept, it's harmless),
-  // but a visitor typing an address expects something to press, not a
-  // field that quietly does its thing in the background. This button (and
-  // Enter) gives that explicit action, plus a moment of visible
-  // confirmation so it's clear something happened.
+  // The links below already update live as you type (kept, it's harmless).
+  // Pressing Search (or Enter) used to just quietly update the href on the
+  // two "Directions via..." buttons below, with no other feedback, which
+  // read as the button doing nothing. It now actually opens directions in
+  // a new tab right away, same destination link those buttons use, so
+  // there's an immediate, visible result. Requires a starting point (typed
+  // or "use my location") since directions need one; without it, this
+  // just tells the visitor what's missing instead of silently failing.
   function confirmTypedOrigin() {
-    USER_COORDS = null;
+    const typed = fromInput.value.trim();
+    if (!typed && !USER_COORDS) {
+      statusEl.textContent = t().directionsMissingOrigin;
+      fromInput.focus();
+      return;
+    }
+    if (typed) USER_COORDS = null;
     buildMapsLinks();
     statusEl.textContent = "";
     if (box) {
@@ -207,6 +216,9 @@ function bindDirectionsListeners() {
       void box.offsetWidth;
       box.classList.add("directions-box--confirmed");
     }
+    const isIOS = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && "ontouchend" in document;
+    const link = isIOS ? document.getElementById("directions-apple") : document.getElementById("directions-google");
+    window.open(link.href, "_blank", "noopener");
   }
 
   fromInput.addEventListener("input", () => {

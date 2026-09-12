@@ -10,13 +10,11 @@
 */
 
 const DONATION_CAMPAIGN = {
-  // Change this any time the goal changes. The progress bar and percentage
-  // recalculate automatically, nothing else needs to be touched.
+  // Placeholder until you give me the real numbers -- change these two to
+  // the actual goal and actual amount raised so far. The progress bar and
+  // percentage recalculate automatically, nothing else needs touching.
   targetAmount: 200000,
-
-  // Update by hand as contributions come in (e.g. after reconciling bank
-  // transfers). Whole numbers only, no currency symbol.
-  raisedAmount: 42500,
+  raisedAmount: 0,
 
   currency: "SAR",
   currencySymbolAr: "ر.س",

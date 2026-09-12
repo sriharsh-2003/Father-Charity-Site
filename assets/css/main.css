@@ -527,41 +527,51 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 }
 html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scaleX(-1); }
 
-/* Small crescent ornament, gently floating, tucked beside the brand name.
-   Same animation as the hero portrait (gentle-float) so the motion
-   language is consistent site-wide, just one small element, not a repeat
-   of the logos or backdrop. */
-.footer-ornament {
-  display: inline-block;
-  vertical-align: -2px;
-  margin-inline-start: var(--space-2);
-  color: var(--color-accent-600);
-  animation: gentle-float 7s ease-in-out infinite;
-  opacity: 0.9;
+/* Soft ambient glow drifting behind the footer content. Replaces an
+   earlier small floating crescent icon that was too small to read as
+   anything -- this reads at any size, so it does the "quiet motion in
+   the footer" job without needing to be a legible little icon. */
+.site-footer::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 8%;
+  bottom: -60%;
+  width: 420px;
+  height: 420px;
+  max-width: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(161, 122, 52, 0.35) 0%, rgba(161, 122, 52, 0) 70%);
+  animation: footer-glow-drift 12s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes footer-glow-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+  50% { transform: translate(30px, -20px) scale(1.15); opacity: 1; }
 }
 
 /* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
    Sector). Shown inline in the footer's bottom row rather than as their
-   own separate labeled section: a small soft chip (not stark white, a
-   warm off-white that echoes --color-surface) gives the dark logo marks
-   enough contrast to read, without a jarring rectangle. */
+   own separate labeled section: a soft chip (not stark white, a warm
+   off-white that echoes --color-surface) gives the dark logo marks
+   enough contrast to read. Sized to actually be visible, not just
+   present. */
 .footer-partners-inline {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 .footer-partners-inline__chip {
-  background: rgba(250, 248, 243, 0.92);
+  background: rgba(250, 248, 243, 0.95);
   border-radius: var(--radius-s);
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-3);
   display: inline-flex;
   align-items: center;
   line-height: 0;
 }
-.footer-partners-inline__chip img { height: 22px; width: auto; display: block; }
+.footer-partners-inline__chip img { height: 34px; width: auto; display: block; }
 @media (max-width: 600px) {
   .footer-bottom { justify-content: center; text-align: center; }
-  .footer-partners-inline__chip img { height: 18px; }
+  .footer-partners-inline__chip img { height: 28px; }
 }
 
 /* =========================================================================
