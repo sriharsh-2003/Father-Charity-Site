@@ -84,7 +84,7 @@ body {
      Lower saturation, higher brightness, and a touch of direct blur push
      it closer to white/paper rather than a crisp photograph sitting
      behind the content. */
-  filter: saturate(0.35) brightness(1.05) blur(1px);
+  filter: saturate(0.35) brightness(1.15) blur(1px);
 }
 .page-backdrop::after {
   content: "";
@@ -94,7 +94,7 @@ body {
   /* Was 0.62 (photo ~38% visible -- reported as "too heavy", "40-60%").
      Raised so only ~15-30% of the photo shows through, closer to a hint
      of texture than a picture anyone consciously registers. */
-  opacity: 0.60;
+  opacity: 0.70;
 }
 
 /* Respect reduced motion */
