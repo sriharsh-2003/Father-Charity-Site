@@ -74,6 +74,22 @@ body {
 .page-backdrop {
   position: fixed;
   inset: 0;
+  /* `inset: 0` alone sizes this to whatever the current viewport height
+     is -- and on mobile, that height genuinely changes as you scroll:
+     the browser's address bar collapses/expands, shrinking or growing
+     the visible viewport. Since background-size:cover recalculates the
+     image's crop/zoom every time its container's size changes, that
+     address-bar collapse was making the photo visibly "jump"/re-crop on
+     every scroll, even though the element itself never actually moved.
+     Locking height to the *largest* possible viewport (100lvh -- stays
+     constant whether the address bar is shown or hidden) stops that
+     recalculation from happening at all. 100vh first as a fallback for
+     browsers that don't know lvh yet; they'll just ignore the second
+     line and keep behaving as before (matches old behavior, doesn't
+     make things worse for them). */
+  height: 100vh;
+  height: 100lvh;
+  width: 100%;
   z-index: -2;
   background-image: url("../img/photos/lattice-ceiling.jpg");
   background-size: cover;
