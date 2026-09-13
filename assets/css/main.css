@@ -92,10 +92,13 @@ html.no-photo-backdrop .page-backdrop { display: none; }
   position: absolute;
   inset: 0;
   background: var(--color-surface);
-  /* Was 0.62 (photo ~38% visible -- reported as "too heavy", "40-60%").
-     Raised so only ~15-30% of the photo shows through, closer to a hint
-     of texture than a picture anyone consciously registers. */
-  opacity: 0.78;
+  /* Restored to match the visibility you pointed at as correct: was 0.78
+     (~20% photo visible) per the previous round's "reduce to 15-30%"
+     request, now 0.3 (~70% photo visible) since that turned out to be too
+     faint to register as an intentional background at all. If this swings
+     too far the other way, it's this one number to move back toward
+     0.5-0.6 for a middle ground. */
+  opacity: 0.3;
 }
 
 /* Respect reduced motion */
