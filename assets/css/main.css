@@ -84,8 +84,9 @@ body {
      Lower saturation, higher brightness, and a touch of direct blur push
      it closer to white/paper rather than a crisp photograph sitting
      behind the content. */
-  filter: saturate(0.35) brightness(1.15) blur(1px);
+  filter: saturate(0.35) brightness(1.35) blur(1px);
 }
+html.no-photo-backdrop .page-backdrop { display: none; }
 .page-backdrop::after {
   content: "";
   position: absolute;
@@ -94,7 +95,7 @@ body {
   /* Was 0.62 (photo ~38% visible -- reported as "too heavy", "40-60%").
      Raised so only ~15-30% of the photo shows through, closer to a hint
      of texture than a picture anyone consciously registers. */
-  opacity: 0.80;
+  opacity: 0.78;
 }
 
 /* Respect reduced motion */
@@ -301,16 +302,25 @@ p { margin: 0 0 var(--space-4); }
   box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .hero::before {
-  /* Retired: this flat vector skyline (arch-silhouette.svg) was stacking
-     on top of the new sitewide photo backdrop (.page-backdrop) *and* the
-     .religious-backdrop layer below, three different background layers
-     competing in the same hero -- reported back as "an overlap of two
-     designs". The photo now carries the ambient-architecture role on its
-     own; this layer is switched off rather than deleted outright, in case
-     a future round wants the site's own SVG illustration style back
-     instead of a photo. */
-  display: none;
+  /* Re-enabled per request: both the illustrated silhouette AND the photo
+     backdrop should show together. This was switched off in the previous
+     round because the two were clashing -- but that was when the photo
+     backdrop was still showing at ~38% strength; now that .page-backdrop
+     is down to ~15-30%, there's enough visual "room" for this faint
+     vector layer on top without the two fighting for attention. Toggle
+     off again via site-config.js (showReligiousBackdrop) if it starts
+     looking cluttered rather than layered. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/arch-silhouette.svg");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 900px 500px;
+  opacity: 0.12;
+  pointer-events: none;
 }
+html.no-religious-backdrop .hero::before { display: none; }
 .hero::after {
   content: "";
   position: absolute;
@@ -366,16 +376,17 @@ html.no-portrait .share-widget { justify-content: center; }
    that opts in with .religious-backdrop, so the same visual language can
    show up on the pray and donate page intros too. */
 .religious-backdrop {
-  /* Retired for the same reason as .hero::before above: this illustrated
-     mosque/minaret silhouette was layering on top of the sitewide photo
-     backdrop, and the two different art styles (flat vector shapes vs. a
-     real photo) competing in the same space read as visual clutter
-     ("overlap of two designs") rather than depth. The photo now carries
-     this role on its own everywhere. Switched off via display:none rather
-     than removed from the markup/other rules, so it's a one-line revert
-     if a future round drops the photo approach and wants the illustrated
-     style back. */
-  display: none;
+  /* Re-enabled per request, same reasoning as .hero::before above: now
+     that the photo backdrop is much fainter than when this was switched
+     off, both can run together as layered depth instead of clashing. */
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/religious-silhouette.svg");
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 1100px 500px;
+  opacity: 0.1;
+  pointer-events: none;
 }
 html.no-religious-backdrop .religious-backdrop { display: none; }
 
@@ -450,13 +461,23 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 
 /* =========================================================================
    FLOWING WAVES / AURA (serenity motif)
-   Previously nearly invisible on purpose (opacity 0.14-0.22, 50px blur) --
-   the intent was "atmosphere, not a shape anyone notices", but that
-   crossed over into "not visible at all" in practice. Kept the same soft
-   diagonal-streak shape (no hard edges, no literal wave graphic) but
-   raised the opacity and pulled the blur in a bit so the streak itself is
-   actually legible as motion/light passing through, while still reading
-   as ambient rather than a hard-edged decoration.
+   CONTROLS: three variables below are the whole "waves" system in one
+   place -- change these three instead of hunting through the rules that
+   use them.
+     --wave-opacity-1   : strength of the brighter (top) streak
+     --wave-opacity-2   : strength of the fainter (bottom) streak
+     --wave-blur         : how soft-edged the streaks are (px)
+   Also toggleable per-page via site-config.js (showWaves: false) if they
+   should be off entirely.
+
+   Previous "on-tint" color (250,248,243 -- near-white) was picked to sit
+   on the aura gradient's pale tones, but that gradient is itself close to
+   the same cream/peach hue, so the streak was blending into 0 practical
+   contrast -- reported as "I don't see them anywhere", correctly. Both
+   variants now use the same warm gold as the accent color, which reads
+   against every background on the site (photo backdrop, aura gradient,
+   and plain white alike) rather than needing a different, easy-to-get-
+   wrong color per background.
    ========================================================================= */
 .flowing-waves {
   position: absolute;
@@ -464,8 +485,12 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  --wave-color: 255, 255, 255;
+  --wave-color: 161, 122, 52;
+  --wave-opacity-1: 0.55;
+  --wave-opacity-2: 0.4;
+  --wave-blur: 28px;
 }
+html.no-waves .flowing-waves { display: none; }
 .flowing-waves::before,
 .flowing-waves::after {
   content: "";
@@ -474,22 +499,23 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   width: 140%;
   height: 55%;
   border-radius: 50%;
-  filter: blur(32px);
+  filter: blur(var(--wave-blur));
 }
 .flowing-waves::before {
   top: 6%;
-  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.42), transparent);
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), var(--wave-opacity-1)), transparent);
   animation: waves-drift-soft 32s ease-in-out infinite;
 }
 .flowing-waves::after {
   bottom: 2%;
-  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.3), transparent);
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), var(--wave-opacity-2)), transparent);
   animation: waves-drift-soft 38s ease-in-out infinite reverse;
 }
-/* Pale wash, for use on the gradient/tinted sections. */
-.flowing-waves--on-tint { --wave-color: 250, 248, 243; }
-/* Warm gold wash, for use on plain white sections (a white-on-white wash
-   would vanish entirely). */
+/* Both variants now share the same gold -- kept as separate classes
+   (rather than deleting one) since the HTML already tags each instance
+   as --on-tint or --on-white, and a future round may want them to
+   diverge again once there's a specific reason to. */
+.flowing-waves--on-tint { --wave-color: 161, 122, 52; }
 .flowing-waves--on-white { --wave-color: 161, 122, 52; }
 @keyframes waves-drift-soft {
   0%, 100% { transform: translateX(-12%) rotate(-2deg); }
