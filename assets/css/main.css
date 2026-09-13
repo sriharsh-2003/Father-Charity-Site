@@ -98,7 +98,7 @@ html.no-photo-backdrop .page-backdrop { display: none; }
      faint to register as an intentional background at all. If this swings
      too far the other way, it's this one number to move back toward
      0.5-0.6 for a middle ground. */
-  opacity: 0.80;
+  opacity: 0.60;
 }
 
 /* Respect reduced motion */
