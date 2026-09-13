@@ -20,6 +20,17 @@ html {
      hides a scrollbar -- a flash that reserving the space up front
      avoids entirely. */
   scrollbar-gutter: stable;
+  /* Stops the rubber-band overscroll bounce at the top/bottom of the
+     page. Without this, bouncing past the top slides the whole document
+     (including the sticky header) down briefly, revealing plain
+     html-background-colored canvas above it where .page-backdrop's photo
+     doesn't reach -- a visible, unstyled strip flashing in above the
+     header on every overscroll. Supported in Chrome/Firefox/Edge and
+     Safari 16+; on older Safari the native bounce can still occur since
+     there's no full CSS-only way to suppress it there, but the html
+     background color above already matches the backdrop's overall tone
+     closely enough that any residual flash is far less noticeable. */
+  overscroll-behavior-y: none;
 }
 body {
   font-size: var(--font-size-body-m);
@@ -68,18 +79,22 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: saturate(0.6) brightness(1.15);
+  /* Pulled back further: was saturate(0.6) brightness(1.15), still read
+     as a sharp, saturated photo rather than a soft, washed-out backdrop.
+     Lower saturation, higher brightness, and a touch of direct blur push
+     it closer to white/paper rather than a crisp photograph sitting
+     behind the content. */
+  filter: saturate(0.35) brightness(1.35) blur(1px);
 }
 .page-backdrop::after {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--color-surface);
-  /* Lower = more photo bleeds through. Was 0.86 (near-invisible against a
-     photo already close in hue to the cream surface color); tuned down by
-     testing crops side-by-side until the lattice pattern actually reads
-     as a recognizable backdrop rather than a faint color tint. */
-  opacity: 0.62;
+  /* Was 0.62 (photo ~38% visible -- reported as "too heavy", "40-60%").
+     Raised so only ~15-30% of the photo shows through, closer to a hint
+     of texture than a picture anyone consciously registers. */
+  opacity: 0.78;
 }
 
 /* Respect reduced motion */
@@ -126,6 +141,11 @@ html[lang="en"] { direction: ltr; }
   position: relative;
   background: var(--color-aura-gradient);
   overflow: hidden;
+  /* Floating-panel effect requested alongside the higher gradient opacity
+     above: a soft shadow cast onto whatever sits below/above this
+     section, so it reads as an elevated panel over the page rather than
+     a flat color band flush with everything around it. */
+  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .section--tinted > .container { position: relative; z-index: 1; }
 
@@ -278,17 +298,18 @@ p { margin: 0 0 var(--space-4); }
   color: var(--color-ink-900);
   padding-block: var(--space-9);
   overflow: hidden;
+  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("../img/arch-silhouette.svg");
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: 900px 500px;
-  opacity: 0.12;
-  pointer-events: none;
+  /* Retired: this flat vector skyline (arch-silhouette.svg) was stacking
+     on top of the new sitewide photo backdrop (.page-backdrop) *and* the
+     .religious-backdrop layer below, three different background layers
+     competing in the same hero -- reported back as "an overlap of two
+     designs". The photo now carries the ambient-architecture role on its
+     own; this layer is switched off rather than deleted outright, in case
+     a future round wants the site's own SVG illustration style back
+     instead of a photo. */
+  display: none;
 }
 .hero::after {
   content: "";
@@ -345,14 +366,16 @@ html.no-portrait .share-widget { justify-content: center; }
    that opts in with .religious-backdrop, so the same visual language can
    show up on the pray and donate page intros too. */
 .religious-backdrop {
-  position: absolute;
-  inset: 0;
-  background-image: url("../img/religious-silhouette.svg");
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: 1100px 500px;
-  opacity: 0.1;
-  pointer-events: none;
+  /* Retired for the same reason as .hero::before above: this illustrated
+     mosque/minaret silhouette was layering on top of the sitewide photo
+     backdrop, and the two different art styles (flat vector shapes vs. a
+     real photo) competing in the same space read as visual clutter
+     ("overlap of two designs") rather than depth. The photo now carries
+     this role on its own everywhere. Switched off via display:none rather
+     than removed from the markup/other rules, so it's a one-line revert
+     if a future round drops the photo approach and wants the illustrated
+     style back. */
+  display: none;
 }
 html.no-religious-backdrop .religious-backdrop { display: none; }
 
@@ -487,6 +510,7 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   background: var(--color-aura-gradient);
   overflow: hidden;
   padding-block: var(--space-7);
+  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .page-hero__content { position: relative; z-index: 1; }
 .page-hero .eyebrow { color: var(--color-primary-700); }
@@ -792,23 +816,23 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   border-radius: 50%;
   background: #f8f2e2;
 }
-.footer-star--near { width: 3px; height: 3px; animation: star-twinkle-near 5s ease-in-out infinite; }
-.footer-star--mid { width: 2.5px; height: 2.5px; animation: star-twinkle-mid 6s ease-in-out infinite; }
-.footer-star--far { width: 2px; height: 2px; animation: star-twinkle-far 7s ease-in-out infinite; }
+.footer-star--near { width: 3.5px; height: 3.5px; animation: star-twinkle-near 5s ease-in-out infinite; }
+.footer-star--mid { width: 3px; height: 3px; animation: star-twinkle-mid 6s ease-in-out infinite; }
+.footer-star--far { width: 2.5px; height: 2.5px; animation: star-twinkle-far 7s ease-in-out infinite; }
 @keyframes star-twinkle-near {
-  0%, 100% { opacity: 0.5; filter: blur(0.3px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.8)); transform: scale(0.9); }
-  50% { opacity: 1; filter: blur(0.8px) drop-shadow(0 0 8px rgba(248, 242, 226, 1)); transform: scale(1.4); }
+  0%, 100% { opacity: 0.7; filter: blur(0.3px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.9)); transform: scale(1); }
+  50% { opacity: 1; filter: blur(0.6px) drop-shadow(0 0 10px rgba(248, 242, 226, 1)); transform: scale(1.5); }
 }
 @keyframes star-twinkle-mid {
-  0%, 100% { opacity: 0.25; filter: blur(0.8px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.6)); transform: scale(0.7); }
-  50% { opacity: 0.9; filter: blur(2px) drop-shadow(0 0 7px rgba(248, 242, 226, 0.8)); transform: scale(1.2); }
+  0%, 100% { opacity: 0.5; filter: blur(0.6px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.8)); transform: scale(0.85); }
+  50% { opacity: 1; filter: blur(1.5px) drop-shadow(0 0 9px rgba(248, 242, 226, 0.95)); transform: scale(1.3); }
 }
 @keyframes star-twinkle-far {
-  0%, 100% { opacity: 0.15; filter: blur(1.5px); transform: scale(0.5); }
-  50% { opacity: 0.65; filter: blur(3.5px); transform: scale(1); }
+  0%, 100% { opacity: 0.35; filter: blur(1.2px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.6)); transform: scale(0.6); }
+  50% { opacity: 0.85; filter: blur(2.5px) drop-shadow(0 0 6px rgba(248, 242, 226, 0.8)); transform: scale(1.1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .footer-star { animation: none; opacity: 0.6; }
+  .footer-star { animation: none; opacity: 0.8; }
 }
 
 /* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
@@ -931,6 +955,7 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  box-shadow: 0 12px 26px -8px rgba(20, 30, 25, 0.16), 0 3px 10px rgba(20, 30, 25, 0.08);
 }
 .directions-box .field input,
 .directions-box select {

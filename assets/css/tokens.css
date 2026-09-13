@@ -32,16 +32,17 @@
   --color-border: #dcd6c8;
 
   /* Aura / glass tokens: soft warm gradient wash + translucent panels.
-     Alpha added to each stop (was opaque) so the site-wide fixed photo
-     backdrop (.page-backdrop, added below the header on every page) reads
-     faintly through every gradient section instead of being fully hidden
-     behind an opaque wash. One token change here reaches every section
-     using --color-aura-gradient (.hero, .page-hero, .section--tinted,
-     .directions-box). */
+     Alpha raised to 0.85-0.9 (was 0.5-0.55) now that these sections read
+     as distinct floating panels over the sitewide photo backdrop
+     (.page-backdrop) rather than a low-opacity wash trying to blend with
+     it -- paired with a drop shadow on each section (see .hero,
+     .page-hero, .section--tinted, .directions-box) for that floating
+     look. The backdrop itself was made much fainter (see .page-backdrop)
+     to carry the "faint bleed-through" job instead. */
   --color-aura-blush: #f3ddd0;
   --color-aura-peach: #ecc9b3;
   --color-aura-sage: #d9e3da;
-  --color-aura-gradient: linear-gradient(135deg, rgba(243, 221, 208, 0.55) 0%, rgba(236, 201, 179, 0.5) 45%, rgba(217, 227, 218, 0.55) 100%);
+  --color-aura-gradient: linear-gradient(135deg, rgba(243, 221, 208, 0.9) 0%, rgba(236, 201, 179, 0.86) 45%, rgba(217, 227, 218, 0.9) 100%);
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-bg-strong: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.6);
