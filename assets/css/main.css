@@ -324,6 +324,42 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 .page-hero .religious-backdrop {
   background-size: 620px 230px;
 }
+/* Composition + position modifiers, so the 7 subpages sharing .page-hero
+   don't all show the identical skyline in the identical spot -- combine
+   one of each on a given page, e.g. religious-backdrop religious-backdrop--alt
+   religious-backdrop--pos-right. */
+.religious-backdrop--alt { background-image: url("../img/religious-silhouette-alt.svg"); }
+.religious-backdrop--lattice { background-image: url("../img/religious-silhouette-lattice.svg"); }
+.religious-backdrop--pos-left { background-position: bottom left; }
+.religious-backdrop--pos-right { background-position: bottom right; }
+
+/* =========================================================================
+   PHOTO OVERLAY (real Unsplash photography, licensed for use, see
+   README-handoff.md for which ones and the reasoning behind which spots
+   they're used in). Static -- no drift/scroll animation, just a very
+   faint textured layer sitting behind content, muted so it reads as
+   atmosphere rather than a photo anyone consciously registers.
+   ========================================================================= */
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.16;
+  filter: saturate(0.5) brightness(1.05);
+  pointer-events: none;
+  z-index: 0;
+}
+.photo-overlay--lattice {
+  background-image: url("../img/photos/lattice-ceiling.jpg");
+  /* Higher-contrast photo than the desert one -- needs to be pushed
+     fainter and softer to actually read as "very faint", not a photo
+     someone would consciously notice. */
+  opacity: 0.1;
+  filter: saturate(0.5) brightness(1.15) blur(1.5px);
+}
+.photo-overlay--desert { background-image: url("../img/photos/desert-sky.jpg"); }
 
 /* =========================================================================
    AMBIENT GLOW ("heavenly" soft light blooms)
@@ -344,53 +380,62 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 .ambient-glow--cream { background: radial-gradient(circle, rgba(250, 248, 243, 0.75) 0%, rgba(250, 248, 243, 0) 72%); }
 .ambient-glow--rose { background: radial-gradient(circle, rgba(224, 158, 128, 0.35) 0%, rgba(224, 158, 128, 0) 72%); }
 @keyframes ambient-glow-drift {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.75; }
-  50% { transform: translate(24px, -18px) scale(1.12); opacity: 1; }
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+  50% { transform: translate(24px, -18px) scale(1.12); opacity: 0.6; }
 }
 
 /* =========================================================================
-   FLOWING WAVES (serenity motif, bottom edge of a section)
-   Two color variants of the same wave shape. NOTE: this deliberately does
-   NOT use fill="currentColor" + a CSS `color` modifier -- currentColor
-   only inherits into an *inline* SVG in the document; an SVG loaded as an
-   external background-image (even a data: URI) is opaque replaced
-   content and can't see the page's CSS at all, so currentColor silently
-   resolves to black there. First version of this looked like a dark
-   smudge for exactly that reason. Each variant below bakes its own
-   fill color into the encoded SVG instead. Blurred so it reads as soft
-   moving water rather than a crisp graphic element.
+   FLOWING WAVES / AURA (serenity motif)
+   Previous version was a filled wave-shaped SVG clipped to a section's
+   bottom edge -- looked like a hard-edged graphic sitting on top of
+   whatever content happened to be near the bottom (buttons, cards),
+   which read as "ugly overlapping", not ambient. Rebuilt as soft,
+   heavily blurred diagonal light streaks with no defined edge at all,
+   spanning the section rather than pinned to one edge, closer to the
+   ambient light-passing-through-glass look of e.g. the PS3 XMB
+   background than a literal wave graphic. Very low opacity is the
+   point -- it should read as atmosphere, not as a shape anyone
+   consciously notices.
    ========================================================================= */
 .flowing-waves {
   position: absolute;
-  left: -10%;
-  right: -10%;
-  bottom: -1px;
-  height: 70px;
-  background-repeat: repeat-x;
-  background-size: 1200px 70px;
-  filter: blur(3px);
-  animation: waves-drift 26s linear infinite;
+  inset: 0;
+  overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  --wave-color: 255, 255, 255;
 }
-/* Pale cream wash, for use on the gradient/tinted sections. */
-.flowing-waves--on-tint {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23faf8f3' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E");
-  opacity: 0.5;
+.flowing-waves::before,
+.flowing-waves::after {
+  content: "";
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 55%;
+  border-radius: 50%;
+  filter: blur(50px);
 }
-/* Warm gold wash, for use on plain white sections (needs to be visible
-   against --color-surface, a pale wash the same color as the page would
-   vanish entirely). */
-.flowing-waves--on-white {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23a17a34' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E");
-  opacity: 0.12;
+.flowing-waves::before {
+  top: 6%;
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.22), transparent);
+  animation: waves-drift-soft 32s ease-in-out infinite;
 }
-@keyframes waves-drift {
-  from { background-position-x: 0; }
-  to { background-position-x: -1200px; }
+.flowing-waves::after {
+  bottom: 2%;
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.14), transparent);
+  animation: waves-drift-soft 38s ease-in-out infinite reverse;
+}
+/* Pale wash, for use on the gradient/tinted sections. */
+.flowing-waves--on-tint { --wave-color: 250, 248, 243; }
+/* Warm gold wash, for use on plain white sections (a white-on-white wash
+   would vanish entirely). */
+.flowing-waves--on-white { --wave-color: 161, 122, 52; }
+@keyframes waves-drift-soft {
+  0%, 100% { transform: translateX(-12%) rotate(-2deg); }
+  50% { transform: translateX(12%) rotate(2deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ambient-glow, .flowing-waves { animation: none; }
+  .ambient-glow, .flowing-waves::before, .flowing-waves::after { animation: none; }
 }
 
 /* =========================================================================
@@ -600,7 +645,24 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 }
 .site-footer a { color: #fff; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
-.footer-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-6); }
+.footer-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-6);
+  /* Frosted glass panel over the night sky (moon/stars) behind it -- a
+     faint lightening + blur of whatever's behind, plus a hairline edge,
+     rather than a solid card, so it still reads as glass and not as a
+     separate opaque box sitting on the footer. */
+  padding: var(--space-6);
+  margin: calc(var(--space-6) * -1);
+  border-radius: var(--radius-m);
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 .footer-bottom {
   position: relative;
   z-index: 1;
@@ -656,11 +718,15 @@ html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scale
   background-size: contain;
   opacity: 0.6;
   /* Three layered glows -- tight, medium, wide -- read as actual moonlight
-     falling off with distance rather than one uniform halo ring. */
+     falling off with distance rather than one uniform halo ring. Pushed
+     further than the first pass: larger radii on all three layers plus a
+     touch of direct blur on the shape itself, so the crescent's own edge
+     softens into the glow instead of staying crisp inside a halo. */
   filter:
-    drop-shadow(0 0 10px rgba(243, 234, 212, 0.55))
-    drop-shadow(0 0 34px rgba(161, 122, 52, 0.6))
-    drop-shadow(0 0 70px rgba(161, 122, 52, 0.35));
+    blur(1.5px)
+    drop-shadow(0 0 16px rgba(243, 234, 212, 0.6))
+    drop-shadow(0 0 50px rgba(161, 122, 52, 0.65))
+    drop-shadow(0 0 100px rgba(161, 122, 52, 0.4));
   animation: footer-crescent-drift 14s ease-in-out infinite;
   pointer-events: none;
 }
@@ -692,16 +758,16 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
 .footer-star--mid { width: 2.5px; height: 2.5px; animation: star-twinkle-mid 6s ease-in-out infinite; }
 .footer-star--far { width: 2px; height: 2px; animation: star-twinkle-far 7s ease-in-out infinite; }
 @keyframes star-twinkle-near {
-  0%, 100% { opacity: 0.5; filter: blur(0px) drop-shadow(0 0 2px rgba(248, 242, 226, 0.8)); transform: scale(0.9); }
-  50% { opacity: 1; filter: blur(0.3px) drop-shadow(0 0 5px rgba(248, 242, 226, 1)); transform: scale(1.3); }
+  0%, 100% { opacity: 0.5; filter: blur(0.3px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.8)); transform: scale(0.9); }
+  50% { opacity: 1; filter: blur(0.8px) drop-shadow(0 0 8px rgba(248, 242, 226, 1)); transform: scale(1.4); }
 }
 @keyframes star-twinkle-mid {
-  0%, 100% { opacity: 0.25; filter: blur(0.4px) drop-shadow(0 0 2px rgba(248, 242, 226, 0.6)); transform: scale(0.7); }
-  50% { opacity: 0.9; filter: blur(1.2px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.8)); transform: scale(1.1); }
+  0%, 100% { opacity: 0.25; filter: blur(0.8px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.6)); transform: scale(0.7); }
+  50% { opacity: 0.9; filter: blur(2px) drop-shadow(0 0 7px rgba(248, 242, 226, 0.8)); transform: scale(1.2); }
 }
 @keyframes star-twinkle-far {
-  0%, 100% { opacity: 0.15; filter: blur(0.8px); transform: scale(0.5); }
-  50% { opacity: 0.65; filter: blur(2px); transform: scale(0.9); }
+  0%, 100% { opacity: 0.15; filter: blur(1.5px); transform: scale(0.5); }
+  50% { opacity: 0.65; filter: blur(3.5px); transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
   .footer-star { animation: none; opacity: 0.6; }
@@ -860,7 +926,17 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
    ========================================================================= */
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
+  /* A transformed element's pre-transition position still counts toward
+     the page's scrollable area (per spec, transform contributes to
+     scrollable overflow), so a .reveal element near the bottom of a page
+     was transiently making the page just tall enough to need a
+     scrollbar, which then goes away once it settles -- a visible flicker
+     that scrollbar-gutter: stable (below) only partly hides, it reserves
+     the layout space but the scrollbar thumb itself still blinks in and
+     out as that transient overflow appears/disappears. 6px is a small
+     enough offset that it essentially never crosses that threshold,
+     while still reading as the same "settles into place" motion. */
+  transform: translateY(6px);
   transition: opacity var(--motion-base), transform var(--motion-base);
   transition-duration: 600ms;
 }
