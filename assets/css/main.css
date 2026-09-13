@@ -94,7 +94,7 @@ body {
   /* Was 0.62 (photo ~38% visible -- reported as "too heavy", "40-60%").
      Raised so only ~15-30% of the photo shows through, closer to a hint
      of texture than a picture anyone consciously registers. */
-  opacity: 0.60;
+  opacity: 0.80;
 }
 
 /* Respect reduced motion */
