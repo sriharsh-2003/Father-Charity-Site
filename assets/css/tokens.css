@@ -41,6 +41,12 @@
      (silhouette, glow, waves, photo) compounded that. This alone won't
      fix it, pairs with removing redundant layers elsewhere in this file. */
   --color-aura-gradient: linear-gradient(160deg, var(--color-aura-blush) 0%, var(--color-aura-sage) 100%);
+  /* Same soft mood as the gradient above, but with the mosque photo
+     showing through a translucent wash instead of flat color -- used on
+     the hero, subpage banners, and the tinted section (see main.css).
+     .directions-box keeps the plain gradient; a small form box doesn't
+     need a photo behind it. */
+  --mosque-wash-bg: linear-gradient(160deg, rgba(246, 230, 220, 0.78) 0%, rgba(230, 235, 228, 0.78) 100%), url("../img/photos/mosque-hero.jpg") center 35% / cover;
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-bg-strong: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.6);

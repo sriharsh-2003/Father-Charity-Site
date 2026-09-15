@@ -76,7 +76,7 @@ html[lang="en"] { direction: ltr; }
 .section > .container, .section--tight > .container { position: relative; z-index: 1; }
 .section--tinted {
   position: relative;
-  background: var(--color-aura-gradient);
+  background: var(--mosque-wash-bg);
   overflow: hidden;
 }
 .section--tinted > .container { position: relative; z-index: 1; }
@@ -218,7 +218,7 @@ p { margin: 0 0 var(--space-4); }
    ========================================================================= */
 .hero {
   position: relative;
-  background: var(--color-aura-gradient);
+  background: var(--mosque-wash-bg);
   color: var(--color-ink-900);
   padding-block: var(--space-9);
   overflow: hidden;
@@ -228,18 +228,9 @@ p { margin: 0 0 var(--space-4); }
    the line-art/illustrated language site-wide (see .symbol-grid-bg), so
    the hero is the one place a photograph earns its keep. arch-silhouette
    .svg is left in the repo, unused, in case this needs reverting. */
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("../img/photos/masjid-nabawi.jpg");
-  background-repeat: no-repeat;
-  background-position: center 20%;
-  background-size: cover;
-  opacity: 0.18;
-  filter: saturate(0.45) brightness(1.08);
-  pointer-events: none;
-}
+/* .hero::before removed -- the hero's own background is now the mosque
+   photo directly (see --mosque-wash-bg in tokens.css), so a separate
+   photo layer on top of it would just be duplicating the same image. */
 .hero::after {
   content: "";
   position: absolute;
@@ -390,7 +381,12 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   background-image: url("../img/symbol-grid.svg");
   background-repeat: repeat;
   background-size: 300px 200px;
-  opacity: 0.05;
+  /* Was 0.05 -- registered as basically invisible against the light
+     sections, since a diluted gold line at 5% opacity has almost no
+     contrast against cream. This is the one layer that's meant to
+     actually be seen (unlike the ambient-glow/wave layers, which are
+     meant to stay subliminal), so it needs real presence. */
+  opacity: 0.16;
   pointer-events: none;
   z-index: 0;
 }
@@ -482,7 +478,7 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
    ========================================================================= */
 .page-hero {
   position: relative;
-  background: var(--color-aura-gradient);
+  background: var(--mosque-wash-bg);
   overflow: hidden;
   padding-block: var(--space-7);
 }
@@ -678,6 +674,12 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   padding-block: var(--space-7);
   margin-top: var(--space-9);
   overflow: hidden;
+  /* Without this, .footer-grid's backdrop-filter below samples straight
+     through this element's own background to the fixed symbol-grid-bg
+     sitting behind the whole page, which is how the moon/star night sky
+     ended up with a stray crosshatch pattern bleeding through it --
+     isolation: isolate gives backdrop-filter a hard boundary to stop at. */
+  isolation: isolate;
 }
 .site-footer a { color: #fff; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }

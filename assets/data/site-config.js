@@ -10,7 +10,7 @@ const SITE_CONFIG = {
   // time the family hasn't supplied a photo yet (or asks for it to come
   // down) -- the hero re-centers itself automatically, no layout is left
   // broken either way.
-  showPortrait: true,
+  showPortrait: false,
 
   // The illustrated mosque/minaret backdrop (assets/img/religious-silhouette.svg)
   // used behind the home hero, the pray page intro, and the donate page
