@@ -20,17 +20,6 @@ html {
      hides a scrollbar -- a flash that reserving the space up front
      avoids entirely. */
   scrollbar-gutter: stable;
-  /* Stops the rubber-band overscroll bounce at the top/bottom of the
-     page. Without this, bouncing past the top slides the whole document
-     (including the sticky header) down briefly, revealing plain
-     html-background-colored canvas above it where .page-backdrop's photo
-     doesn't reach -- a visible, unstyled strip flashing in above the
-     header on every overscroll. Supported in Chrome/Firefox/Edge and
-     Safari 16+; on older Safari the native bounce can still occur since
-     there's no full CSS-only way to suppress it there, but the html
-     background color above already matches the backdrop's overall tone
-     closely enough that any residual flash is far less noticeable. */
-  overscroll-behavior-y: none;
 }
 body {
   font-size: var(--font-size-body-m);
@@ -44,78 +33,6 @@ body {
 }
 .site-main { flex: 1 0 auto; }
 .site-footer { flex-shrink: 0; }
-
-/* =========================================================================
-   PAGE BACKDROP (site-wide, fixed/glued image behind the whole page)
-   One photo behind everything -- header, every section, footer -- instead
-   of separate small background patches living inside individual sections
-   (the old .photo-overlay approach: only covered whichever section
-   happened to have one, leaving plain color in between). `position: fixed`
-   pins the image to the viewport itself, so it never scrolls: page content
-   moves over it exactly like a sheet of glass over a photograph.
-
-   Picked assets/img/photos/lattice-ceiling.jpg (a geometric mashrabiya/
-   skylight pattern) rather than the Kaaba or Masjid an-Nabawi photos also
-   in assets/img/photos/ for this ambient, faded-to-near-invisible
-   treatment: those two are specific, deeply revered sites with worshippers
-   visible in frame, and turning them into a blurred, 10%-opacity wallpaper
-   texture behind donation forms and nav menus felt like the wrong way to
-   use them, regardless of licensing. This lattice pattern is decorative
-   architecture, not a specific sacred site, so it can recede into pure
-   atmosphere without that concern. Easy to swap: change the url() below.
-
-   A single fixed <div class="page-backdrop"> is added right after <body>
-   on every page. Sections no longer need their own opaque background for
-   text to stay legible -- the ::after wash below (tinted with
-   --color-surface) sits between the photo and the content and is the only
-   thing tuning how much photo shows through; the reduced-alpha
-   --color-aura-gradient (tokens.css) layers on top of that on sections
-   that use it, at whatever opacity that token specifies. */
-.page-backdrop {
-  position: fixed;
-  inset: 0;
-  /* `inset: 0` alone sizes this to whatever the current viewport height
-     is -- and on mobile, that height genuinely changes as you scroll:
-     the browser's address bar collapses/expands, shrinking or growing
-     the visible viewport. Since background-size:cover recalculates the
-     image's crop/zoom every time its container's size changes, that
-     address-bar collapse was making the photo visibly "jump"/re-crop on
-     every scroll, even though the element itself never actually moved.
-     Locking height to the *largest* possible viewport (100lvh -- stays
-     constant whether the address bar is shown or hidden) stops that
-     recalculation from happening at all. 100vh first as a fallback for
-     browsers that don't know lvh yet; they'll just ignore the second
-     line and keep behaving as before (matches old behavior, doesn't
-     make things worse for them). */
-  height: 100vh;
-  height: 100lvh;
-  width: 100%;
-  z-index: -2;
-  background-image: url("../img/photos/lattice-ceiling.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  /* Pulled back further: was saturate(0.6) brightness(1.15), still read
-     as a sharp, saturated photo rather than a soft, washed-out backdrop.
-     Lower saturation, higher brightness, and a touch of direct blur push
-     it closer to white/paper rather than a crisp photograph sitting
-     behind the content. */
-  filter: saturate(0.35) brightness(1.35) blur(1px);
-}
-html.no-photo-backdrop .page-backdrop { display: none; }
-.page-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--color-surface);
-  /* Restored to match the visibility you pointed at as correct: was 0.78
-     (~20% photo visible) per the previous round's "reduce to 15-30%"
-     request, now 0.3 (~70% photo visible) since that turned out to be too
-     faint to register as an intentional background at all. If this swings
-     too far the other way, it's this one number to move back toward
-     0.5-0.6 for a middle ground. */
-  opacity: 0.70;
-}
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -161,11 +78,6 @@ html[lang="en"] { direction: ltr; }
   position: relative;
   background: var(--color-aura-gradient);
   overflow: hidden;
-  /* Floating-panel effect requested alongside the higher gradient opacity
-     above: a soft shadow cast onto whatever sits below/above this
-     section, so it reads as an elevated panel over the page rather than
-     a flat color band flush with everything around it. */
-  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .section--tinted > .container { position: relative; z-index: 1; }
 
@@ -191,15 +103,7 @@ p { margin: 0 0 var(--space-4); }
    HEADER / NAVIGATION
    ========================================================================= */
 .site-header {
-  /* Was fully opaque --color-surface-raised. Now a frosted glass panel so
-     the fixed .page-backdrop shows through faintly here too, instead of
-     the header being the one plain opaque strip on an otherwise
-     backdrop-tinted page. backdrop-filter blurs whatever photo content is
-     directly behind it, keeping nav text legible without needing a
-     stronger, more opaque tint. */
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--color-surface-raised);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
@@ -318,28 +222,24 @@ p { margin: 0 0 var(--space-4); }
   color: var(--color-ink-900);
   padding-block: var(--space-9);
   overflow: hidden;
-  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
+/* Hero backdrop: the real mosque photograph, replacing the drawn
+   arch-silhouette.svg that used to sit here. The symbol grid now carries
+   the line-art/illustrated language site-wide (see .symbol-grid-bg), so
+   the hero is the one place a photograph earns its keep. arch-silhouette
+   .svg is left in the repo, unused, in case this needs reverting. */
 .hero::before {
-  /* Re-enabled per request: both the illustrated silhouette AND the photo
-     backdrop should show together. This was switched off in the previous
-     round because the two were clashing -- but that was when the photo
-     backdrop was still showing at ~38% strength; now that .page-backdrop
-     is down to ~15-30%, there's enough visual "room" for this faint
-     vector layer on top without the two fighting for attention. Toggle
-     off again via site-config.js (showReligiousBackdrop) if it starts
-     looking cluttered rather than layered. */
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("../img/arch-silhouette.svg");
+  background-image: url("../img/photos/masjid-nabawi.jpg");
   background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: 900px 500px;
-  opacity: 0.12;
+  background-position: center 20%;
+  background-size: cover;
+  opacity: 0.18;
+  filter: saturate(0.45) brightness(1.08);
   pointer-events: none;
 }
-html.no-religious-backdrop .hero::before { display: none; }
 .hero::after {
   content: "";
   position: absolute;
@@ -395,9 +295,6 @@ html.no-portrait .share-widget { justify-content: center; }
    that opts in with .religious-backdrop, so the same visual language can
    show up on the pray and donate page intros too. */
 .religious-backdrop {
-  /* Re-enabled per request, same reasoning as .hero::before above: now
-     that the photo backdrop is much fainter than when this was switched
-     off, both can run together as layered depth instead of clashing. */
   position: absolute;
   inset: 0;
   background-image: url("../img/religious-silhouette.svg");
@@ -443,17 +340,62 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 .religious-backdrop--pos-right { background-position: bottom right; }
 
 /* =========================================================================
-   PHOTO OVERLAY -- retired.
-   Replaced by the single site-wide .page-backdrop above. This used to add
-   a second, section-scoped photo layer on top of that (only on the home
-   and grave-locator pages), which read as an inconsistent patch of extra
-   background rather than "more of the same photo" since the two images
-   didn't line up or match tone. Rule intentionally left removed rather
-   than just unused: assets/img/photos/lattice-ceiling.jpg and
-   assets/img/photos/desert-sky.jpg are still on disk if a future round
-   wants a second, complementary layer done properly (e.g. cross-fading
-   between two backdrops per page rather than stacking them).
+   PHOTO OVERLAY (real Unsplash photography, licensed for use, see
+   README-handoff.md for which ones and the reasoning behind which spots
+   they're used in). Static -- no drift/scroll animation, just a very
+   faint textured layer sitting behind content, muted so it reads as
+   atmosphere rather than a photo anyone consciously registers.
    ========================================================================= */
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.16;
+  filter: saturate(0.5) brightness(1.05);
+  pointer-events: none;
+  z-index: 0;
+}
+.photo-overlay--lattice {
+  background-image: url("../img/photos/lattice-ceiling.jpg");
+  /* Higher-contrast photo than the desert one -- needs to be pushed
+     fainter and softer to actually read as "very faint", not a photo
+     someone would consciously notice. */
+  opacity: 0.1;
+  filter: saturate(0.5) brightness(1.15) blur(1.5px);
+}
+.photo-overlay--desert { background-image: url("../img/photos/desert-sky.jpg"); }
+.photo-overlay--mosque {
+  background-image: url("../img/photos/masjid-nabawi.jpg");
+  /* Anchored high so the domes/minarets sit behind the heading rather
+     than the wall below them, and kept fainter than the desert variant
+     since this photo carries much more detail. */
+  background-position: center 22%;
+  opacity: 0.14;
+  filter: saturate(0.45) brightness(1.1);
+}
+
+/* =========================================================================
+   SYMBOL GRID (page-wide line-art texture)
+   Tiling outlined Saudi/Islamic motifs on a faint rule grid, applied to
+   the page background so it runs continuously behind every section
+   rather than being a per-section decoration. Extremely low opacity --
+   at normal reading distance it should register as paper texture, not
+   as a set of icons.
+   ========================================================================= */
+.symbol-grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image: url("../img/symbol-grid.svg");
+  background-repeat: repeat;
+  background-size: 300px 200px;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 0;
+}
+/* Everything real sits above the texture. */
+.site-header, .site-main, .site-footer { position: relative; z-index: 1; }
 
 /* =========================================================================
    AMBIENT GLOW ("heavenly" soft light blooms)
@@ -480,23 +422,16 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
 
 /* =========================================================================
    FLOWING WAVES / AURA (serenity motif)
-   CONTROLS: three variables below are the whole "waves" system in one
-   place -- change these three instead of hunting through the rules that
-   use them.
-     --wave-opacity-1   : strength of the brighter (top) streak
-     --wave-opacity-2   : strength of the fainter (bottom) streak
-     --wave-blur         : how soft-edged the streaks are (px)
-   Also toggleable per-page via site-config.js (showWaves: false) if they
-   should be off entirely.
-
-   Previous "on-tint" color (250,248,243 -- near-white) was picked to sit
-   on the aura gradient's pale tones, but that gradient is itself close to
-   the same cream/peach hue, so the streak was blending into 0 practical
-   contrast -- reported as "I don't see them anywhere", correctly. Both
-   variants now use the same warm gold as the accent color, which reads
-   against every background on the site (photo backdrop, aura gradient,
-   and plain white alike) rather than needing a different, easy-to-get-
-   wrong color per background.
+   Previous version was a filled wave-shaped SVG clipped to a section's
+   bottom edge -- looked like a hard-edged graphic sitting on top of
+   whatever content happened to be near the bottom (buttons, cards),
+   which read as "ugly overlapping", not ambient. Rebuilt as soft,
+   heavily blurred diagonal light streaks with no defined edge at all,
+   spanning the section rather than pinned to one edge, closer to the
+   ambient light-passing-through-glass look of e.g. the PS3 XMB
+   background than a literal wave graphic. Very low opacity is the
+   point -- it should read as atmosphere, not as a shape anyone
+   consciously notices.
    ========================================================================= */
 .flowing-waves {
   position: absolute;
@@ -504,12 +439,8 @@ html.no-religious-backdrop .religious-backdrop { display: none; }
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  --wave-color: 161, 122, 52;
-  --wave-opacity-1: 0.55;
-  --wave-opacity-2: 0.4;
-  --wave-blur: 28px;
+  --wave-color: 255, 255, 255;
 }
-html.no-waves .flowing-waves { display: none; }
 .flowing-waves::before,
 .flowing-waves::after {
   content: "";
@@ -518,23 +449,22 @@ html.no-waves .flowing-waves { display: none; }
   width: 140%;
   height: 55%;
   border-radius: 50%;
-  filter: blur(var(--wave-blur));
+  filter: blur(50px);
 }
 .flowing-waves::before {
   top: 6%;
-  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), var(--wave-opacity-1)), transparent);
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.22), transparent);
   animation: waves-drift-soft 32s ease-in-out infinite;
 }
 .flowing-waves::after {
   bottom: 2%;
-  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), var(--wave-opacity-2)), transparent);
+  background: linear-gradient(100deg, transparent, rgba(var(--wave-color), 0.14), transparent);
   animation: waves-drift-soft 38s ease-in-out infinite reverse;
 }
-/* Both variants now share the same gold -- kept as separate classes
-   (rather than deleting one) since the HTML already tags each instance
-   as --on-tint or --on-white, and a future round may want them to
-   diverge again once there's a specific reason to. */
-.flowing-waves--on-tint { --wave-color: 161, 122, 52; }
+/* Pale wash, for use on the gradient/tinted sections. */
+.flowing-waves--on-tint { --wave-color: 250, 248, 243; }
+/* Warm gold wash, for use on plain white sections (a white-on-white wash
+   would vanish entirely). */
 .flowing-waves--on-white { --wave-color: 161, 122, 52; }
 @keyframes waves-drift-soft {
   0%, 100% { transform: translateX(-12%) rotate(-2deg); }
@@ -555,7 +485,6 @@ html.no-waves .flowing-waves { display: none; }
   background: var(--color-aura-gradient);
   overflow: hidden;
   padding-block: var(--space-7);
-  box-shadow: 0 16px 32px -8px rgba(20, 30, 25, 0.16), 0 4px 12px rgba(20, 30, 25, 0.08);
 }
 .page-hero__content { position: relative; z-index: 1; }
 .page-hero .eyebrow { color: var(--color-primary-700); }
@@ -806,34 +735,34 @@ html.no-waves .flowing-waves { display: none; }
 html[dir="rtl"] .site-footer::before { inset-inline-end: -40px; transform: scaleX(-1); }
 
 /* A real crescent, sized to actually be seen, with a soft gold glow
-   around it, gently drifting. Previous version used a flat single-color
-   fill, which read as a basic flat icon rather than an actual moon.
-   Switched the fill to a linear gradient (pale cream catching the light
-   on one edge, deepening to a shadowed gold-brown on the other) so the
-   shape has a sense of curvature/lit surface instead of being a solid
-   silhouette, and pushed the blur further for a genuinely soft, frosted
-   look rather than a crisp cutout with a glow bolted on. */
+   around it, gently drifting. Went through a few attempts: a 14px icon
+   (illegible) -> a shapeless glow (no legible form) -> a legible crescent
+   with no glow, pinned right at the footer's clipped top edge so it read
+   as a flat sticker cut off in the corner. This version sits fully
+   inside the footer (no more clipping) and drop-shadow gives it the soft
+   halo the earlier flat version was missing, without blurring the shape
+   itself into mush. */
 .site-footer::after {
   content: "";
   position: absolute;
   inset-inline-end: 8%;
   top: 12%;
-  width: 150px;
-  height: 150px;
-  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22moonGrad%22%20x1%3D%2215%25%22%20y1%3D%2210%25%22%20x2%3D%2285%25%22%20y2%3D%2295%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23f8f0d8%22/%3E%3Cstop%20offset%3D%2245%25%22%20stop-color%3D%22%23dcb96f%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%238a6526%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath%20fill%3D%22url%28%23moonGrad%29%22%20d%3D%22M21%2012.79A9%209%200%201%201%2011.21%203%207%207%200%200%200%2021%2012.79z%22/%3E%3C/svg%3E");
+  width: 130px;
+  height: 130px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23a17a34' d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.75;
-  /* Heavier direct blur than before (1.5px -> 4px) is the "frosted" look
-     the shape itself needed -- softens the gradient's edges into the glow
-     instead of the glow sitting around an otherwise crisp, flat cutout.
-     Three layered glows -- tight, medium, wide -- still read as actual
-     moonlight falling off with distance rather than one uniform halo ring. */
+  opacity: 0.6;
+  /* Three layered glows -- tight, medium, wide -- read as actual moonlight
+     falling off with distance rather than one uniform halo ring. Pushed
+     further than the first pass: larger radii on all three layers plus a
+     touch of direct blur on the shape itself, so the crescent's own edge
+     softens into the glow instead of staying crisp inside a halo. */
   filter:
-    blur(4px)
-    drop-shadow(0 0 18px rgba(248, 240, 216, 0.7))
-    drop-shadow(0 0 55px rgba(161, 122, 52, 0.7))
-    drop-shadow(0 0 110px rgba(161, 122, 52, 0.45));
+    blur(1.5px)
+    drop-shadow(0 0 16px rgba(243, 234, 212, 0.6))
+    drop-shadow(0 0 50px rgba(161, 122, 52, 0.65))
+    drop-shadow(0 0 100px rgba(161, 122, 52, 0.4));
   animation: footer-crescent-drift 14s ease-in-out infinite;
   pointer-events: none;
 }
@@ -861,23 +790,23 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   border-radius: 50%;
   background: #f8f2e2;
 }
-.footer-star--near { width: 3.5px; height: 3.5px; animation: star-twinkle-near 5s ease-in-out infinite; }
-.footer-star--mid { width: 3px; height: 3px; animation: star-twinkle-mid 6s ease-in-out infinite; }
-.footer-star--far { width: 2.5px; height: 2.5px; animation: star-twinkle-far 7s ease-in-out infinite; }
+.footer-star--near { width: 3px; height: 3px; animation: star-twinkle-near 5s ease-in-out infinite; }
+.footer-star--mid { width: 2.5px; height: 2.5px; animation: star-twinkle-mid 6s ease-in-out infinite; }
+.footer-star--far { width: 2px; height: 2px; animation: star-twinkle-far 7s ease-in-out infinite; }
 @keyframes star-twinkle-near {
-  0%, 100% { opacity: 0.7; filter: blur(0.3px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.9)); transform: scale(1); }
-  50% { opacity: 1; filter: blur(0.6px) drop-shadow(0 0 10px rgba(248, 242, 226, 1)); transform: scale(1.5); }
+  0%, 100% { opacity: 0.5; filter: blur(0.3px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.8)); transform: scale(0.9); }
+  50% { opacity: 1; filter: blur(0.8px) drop-shadow(0 0 8px rgba(248, 242, 226, 1)); transform: scale(1.4); }
 }
 @keyframes star-twinkle-mid {
-  0%, 100% { opacity: 0.5; filter: blur(0.6px) drop-shadow(0 0 4px rgba(248, 242, 226, 0.8)); transform: scale(0.85); }
-  50% { opacity: 1; filter: blur(1.5px) drop-shadow(0 0 9px rgba(248, 242, 226, 0.95)); transform: scale(1.3); }
+  0%, 100% { opacity: 0.25; filter: blur(0.8px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.6)); transform: scale(0.7); }
+  50% { opacity: 0.9; filter: blur(2px) drop-shadow(0 0 7px rgba(248, 242, 226, 0.8)); transform: scale(1.2); }
 }
 @keyframes star-twinkle-far {
-  0%, 100% { opacity: 0.35; filter: blur(1.2px) drop-shadow(0 0 3px rgba(248, 242, 226, 0.6)); transform: scale(0.6); }
-  50% { opacity: 0.85; filter: blur(2.5px) drop-shadow(0 0 6px rgba(248, 242, 226, 0.8)); transform: scale(1.1); }
+  0%, 100% { opacity: 0.15; filter: blur(1.5px); transform: scale(0.5); }
+  50% { opacity: 0.65; filter: blur(3.5px); transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .footer-star { animation: none; opacity: 0.8; }
+  .footer-star { animation: none; opacity: 0.6; }
 }
 
 /* Partner / supporting-body logos (AWQAF, National Center for Non-Profit
@@ -1000,7 +929,6 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  box-shadow: 0 12px 26px -8px rgba(20, 30, 25, 0.16), 0 3px 10px rgba(20, 30, 25, 0.08);
 }
 .directions-box .field input,
 .directions-box select {
@@ -1095,41 +1023,6 @@ html[dir="rtl"] .site-footer::after { animation-name: footer-crescent-drift-rtl;
 }
 .donation-progress__pct { font-weight: var(--font-weight-semibold); color: var(--color-primary-700); }
 .donation-progress__meta { display: flex; justify-content: space-between; font-size: var(--font-size-body-s); color: var(--color-ink-600); }
-
-/* Partner logos flanking the donation glass box (donate.html only), sized
-   to actually be seen rather than tucked small into the footer. Full
-   color, no invert filter -- this box sits on the light backdrop/aura
-   background, not the dark footer green, so the logos' own colors read
-   fine here without help.
-
-   Both logos are wide landscape marks (~2.2:1 aspect ratio). Sizing them
-   by height alone (was 130px) made each one demand ~270-300px of width --
-   more than fit alongside the box in a 720px container, so the box
-   itself got flex-squeezed down to ~66px. Fixed by widening the row's
-   container (720px -> 1040px, see donate.html) and giving the box an
-   explicit flex-basis so it can't be squeezed below a sane width, with
-   the logos allowed to shrink a little (flex: 0 1 auto + max-width) as a
-   safety margin on in-between viewport widths before the stacked mobile
-   layout takes over. */
-.donation-progress-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-6);
-}
-.donation-progress-row__logo {
-  flex: 0 1 auto;
-  max-width: 220px;
-  width: auto;
-  height: 110px;
-  object-fit: contain;
-}
-.donation-progress-row .donation-progress { flex: 1 1 420px; min-width: 280px; }
-@media (max-width: 920px) {
-  .donation-progress-row { flex-direction: column; gap: var(--space-4); }
-  .donation-progress-row__logo { height: 64px; max-width: 160px; order: 2; }
-  .donation-progress-row .donation-progress { order: 1; width: 100%; flex-basis: auto; }
-}
 
 /* =========================================================================
    DONATION FORM (donate.html, driven by assets/data/donation.js + donate.js)

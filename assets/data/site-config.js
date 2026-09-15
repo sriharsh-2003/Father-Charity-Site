@@ -15,17 +15,5 @@ const SITE_CONFIG = {
   // The illustrated mosque/minaret backdrop (assets/img/religious-silhouette.svg)
   // used behind the home hero, the pray page intro, and the donate page
   // intro. Purely decorative vector art, not a real place or a photo.
-  // Layers together with the photo backdrop below (both can be on at once).
   showReligiousBackdrop: true,
-
-  // The site-wide photo backdrop (a fixed, very faint architectural photo
-  // behind every page -- see .page-backdrop in assets/css/main.css). Turn
-  // off for a plain flat background instead.
-  showPhotoBackdrop: true,
-
-  // The soft diagonal light-streak "waves" that drift across the hero,
-  // page headers, and tinted sections. Color/strength/blur are controlled
-  // separately in assets/css/main.css (search "FLOWING WAVES" -- three
-  // CSS variables: --wave-opacity-1, --wave-opacity-2, --wave-blur).
-  showWaves: true,
 };

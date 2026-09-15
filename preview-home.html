@@ -47,7 +47,7 @@
   --color-aura-blush: #f3ddd0;
   --color-aura-peach: #ecc9b3;
   --color-aura-sage: #d9e3da;
-  --color-aura-gradient: linear-gradient(135deg, rgba(243, 221, 208, 0.9) 0%, rgba(236, 201, 179, 0.86) 45%, rgba(217, 227, 218, 0.9) 100%);
+  --color-aura-gradient: linear-gradient(135deg, var(--color-aura-blush) 0%, var(--color-aura-peach) 45%, var(--color-aura-sage) 100%);
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-bg-strong: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.6);
@@ -117,7 +117,6 @@ html {
   color: var(--color-ink-900);
   background: var(--color-surface);
   scroll-behavior: smooth;
-  overscroll-behavior-y: none;
 }
 body {
   font-size: var(--font-size-body-m);
@@ -128,27 +127,6 @@ body {
 }
 .site-main { flex: 1 0 auto; }
 .site-footer { flex-shrink: 0; }
-
-.page-backdrop {
-  position: fixed;
-  inset: 0;
-  height: 100vh;
-  height: 100lvh;
-  width: 100%;
-  z-index: -2;
-  background-image: url("assets/img/photos/lattice-ceiling.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: saturate(0.35) brightness(1.35) blur(1px);
-}
-.page-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--color-surface);
-  opacity: 0.3;
-}
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -210,9 +188,7 @@ p { margin: 0 0 var(--space-4); }
    HEADER / NAVIGATION
    ========================================================================= */
 .site-header {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: var(--color-surface-raised);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
@@ -760,8 +736,6 @@ p { margin: 0 0 var(--space-4); }
 </head>
 <body>
 
-<div class="page-backdrop" aria-hidden="true"></div>
-
 <header class="site-header">
   <div class="container site-header__bar">
     <a class="brand" href="index.html">
@@ -788,6 +762,7 @@ p { margin: 0 0 var(--space-4); }
 <main class="site-main">
 
 <section class="hero">
+  <div class="religious-backdrop" aria-hidden="true"></div>
   <div class="container hero__layout">
     <div class="hero__portrait">
       <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNDAwIDQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0icG9ydHJhaXRUaXRsZSI+CiAgPHRpdGxlIGlkPSJwb3J0cmFpdFRpdGxlIj5QbGFjZWhvbGRlciBwb3J0cmFpdDwvdGl0bGU+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJnR3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxNDUyM2YiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMGQzYjJlIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGNsaXBQYXRoIGlkPSJjaXJjbGVDbGlwIj4KICAgICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxOTAiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgoKICA8Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYTE3YTM0IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjIgNiIvPgoKICA8ZyBjbGlwLXBhdGg9InVybCgjY2lyY2xlQ2xpcCkiPgogICAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9InVybCgjYmdHcmFkKSIvPgogICAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTcwIiByPSI3MiIgZmlsbD0iI2YzZWFkNCIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNIDcwIDQwMCBDIDcwIDI4MCAxMjAgMjM1IDIwMCAyMzUgQyAyODAgMjM1IDMzMCAyODAgMzMwIDQwMCBaIiBmaWxsPSIjZjNlYWQ0IiBvcGFjaXR5PSIwLjkiLz4KICA8L2c+CgogIDxjaXJjbGUgY3g9IjIwMCIgY3k9IjIwMCIgcj0iMTkwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmYWY4ZjMiIHN0cm9rZS13aWR0aD0iNiIvPgo8L3N2Zz4K" alt="" width="220" height="220">
@@ -885,10 +860,6 @@ p { margin: 0 0 var(--space-4); }
       <span>
         <span class="i18n-ar">جميع الحقوق محفوظة © <span data-current-year></span></span><span class="i18n-en">All rights reserved © <span data-current-year></span></span>
       </span>
-      <div class="footer-partners-inline" aria-label="Supported by AWQAF and the National Center for Non-Profit Sector">
-        <span class="footer-partners-inline__chip"><img src="assets/img/partners/awqaf-logo.png" alt="AWQAF" loading="lazy"></span>
-        <span class="footer-partners-inline__chip"><img src="assets/img/partners/ncnp-logo.png" alt="National Center for Non-Profit Sector" loading="lazy"></span>
-      </div>
     </div>
   </div>
 </footer>

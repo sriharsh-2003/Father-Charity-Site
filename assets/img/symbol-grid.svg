@@ -1,0 +1,87 @@
+<!--
+  Tiling line-art symbol grid, used as a very faint page-wide texture
+  (see .symbol-grid in main.css). Outlined Saudi/Islamic motifs arranged
+  on a light rule grid: Kaaba, geometric star, crescent, palm, dallah
+  (coffee pot), camel, dates, lantern. Drawn as strokes only, no fills,
+  so it reads as a technical/architectural drawing rather than a graphic.
+
+  Designed to tile seamlessly on both axes: the tile is 600x400 with a
+  3x2 arrangement of 200x200 cells, and the grid rules sit exactly on the
+  tile edges so adjacent copies line up. Same illustrated-vector,
+  not-a-photo reasoning as religious-silhouette.svg.
+-->
+<svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+  <g fill="none" stroke="#a17a34" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- grid rules (drawn at tile edges + interior divisions so tiles align) -->
+    <g stroke-width="0.8" opacity="0.55">
+      <path d="M0 0 H600 M0 200 H600 M0 400 H600"/>
+      <path d="M0 0 V400 M200 0 V400 M400 0 V400 M600 0 V400"/>
+    </g>
+
+    <!-- ===== row 1 ===== -->
+
+    <!-- cell 1: Kaaba (cube in simple isometric) -->
+    <g transform="translate(100 100)">
+      <path d="M-30 -22 L0 -36 L30 -22 L30 20 L0 34 L-30 20 Z"/>
+      <path d="M-30 -22 L0 -8 L30 -22"/>
+      <path d="M0 -8 V34"/>
+      <path d="M-30 4 L0 18 L30 4"/>
+    </g>
+
+    <!-- cell 2: eight-point geometric star, outlined -->
+    <g transform="translate(300 100)">
+      <path d="M0 -34 L9 -13 L31 -13 L14 1 L21 23 L0 10 L-21 23 L-14 1 L-31 -13 L-9 -13 Z"/>
+      <path d="M0 -20 L6 -7 L19 -7 L8 1 L12 14 L0 6 L-12 14 L-8 1 L-19 -7 L-6 -7 Z" opacity="0.6"/>
+    </g>
+
+    <!-- cell 3: crescent + star. NOTE on the inner arc radius: the two
+         arc endpoints are 52 apart, so any radius under 26 can't span
+         that chord and SVG silently scales it up to 26, which collapses
+         the crescent into a bare sliver. 34 gives a proper crescent. -->
+    <g transform="translate(500 100)">
+      <path d="M6 -26 A 26 26 0 1 0 6 26 A 34 34 0 1 1 6 -26 Z"/>
+      <path d="M24 -16 L27 -9 L34 -9 L28 -5 L30 2 L24 -2 L18 2 L20 -5 L14 -9 L21 -9 Z"/>
+    </g>
+
+    <!-- ===== row 2 ===== -->
+
+    <!-- cell 4: palm tree -->
+    <g transform="translate(100 300)">
+      <path d="M0 34 V-6"/>
+      <path d="M0 -6 q -22 -6 -30 -22 q 20 2 30 14"/>
+      <path d="M0 -6 q 22 -6 30 -22 q -20 2 -30 14"/>
+      <path d="M0 -8 q -12 -18 -8 -34 q 10 12 8 28"/>
+      <path d="M0 -8 q 12 -18 8 -34 q -10 12 -8 28"/>
+      <path d="M-8 34 H8"/>
+    </g>
+
+    <!-- cell 5: dallah (Arabic coffee pot) -->
+    <g transform="translate(300 300)">
+      <!-- base + body -->
+      <path d="M-15 30 h30"/>
+      <path d="M-13 30 l3 -26 h20 l3 26"/>
+      <!-- shoulder + neck -->
+      <path d="M-10 4 q 10 -9 20 0"/>
+      <path d="M-5 4 l1 -12 h8 l1 12"/>
+      <!-- domed lid + finial -->
+      <path d="M-5 -8 q 5 -8 10 0"/>
+      <path d="M0 -14 v-5"/>
+      <!-- curved spout, right -->
+      <path d="M10 2 q 16 -2 12 -14 q -1 -4 -5 -4"/>
+      <!-- handle, left -->
+      <path d="M-11 2 q -14 4 -10 16 q 2 5 6 4"/>
+    </g>
+
+    <!-- cell 6: hanging lantern -->
+    <g transform="translate(500 300)">
+      <path d="M0 -34 V-26"/>
+      <path d="M-10 -26 h20"/>
+      <path d="M-10 -26 l-6 12 h32 l-6 -12"/>
+      <path d="M-16 -14 v26 h32 v-26"/>
+      <path d="M-16 12 l6 10 h20 l6 -10"/>
+      <path d="M-6 -14 v26 M6 -14 v26" opacity="0.6"/>
+      <path d="M0 22 v8"/>
+    </g>
+  </g>
+</svg>

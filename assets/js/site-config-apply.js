@@ -11,6 +11,4 @@
   var html = document.documentElement;
   if (SITE_CONFIG.showPortrait === false) html.classList.add("no-portrait");
   if (SITE_CONFIG.showReligiousBackdrop === false) html.classList.add("no-religious-backdrop");
-  if (SITE_CONFIG.showPhotoBackdrop === false) html.classList.add("no-photo-backdrop");
-  if (SITE_CONFIG.showWaves === false) html.classList.add("no-waves");
 })();
